@@ -50,11 +50,17 @@ abstract class Agent
     private $ttl;
 
     /**
+     * Client
+     * @var any
+     */
+    private $client;
+
+    /**
      * Constructor.
      * @param string $name
      * @param int    $ttl
      */
-    final public function __construct(string $name, int $ttl = self::DEFAULT_TTL)
+    public function __construct(string $name, int $ttl = self::DEFAULT_TTL)
     {
         $this->name = $name;
         $this->ttl  = $ttl;
@@ -100,5 +106,26 @@ abstract class Agent
     final public function getTtl(): int
     {
         return $this->ttl;
+    }
+
+    /**
+     * Set client.
+     * @param  object $client
+     * @return self
+     */
+    final public function setClient($client): self
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * Get client.
+     * @return object
+     */
+    final public function getClient()
+    {
+        return $this->client;
     }
 }
