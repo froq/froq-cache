@@ -32,6 +32,12 @@ namespace Froq\Cache\Agent;
 abstract class Agent
 {
     /**
+     * Default TTL (1 minute).
+     * @const int
+     */
+    const DEFAULT_TTL = 3600;
+
+    /**
      * Name.
      * @var string
      */
@@ -48,7 +54,7 @@ abstract class Agent
      * @param string $name
      * @param int    $ttl
      */
-    final public function __construct(string $name, int $ttl)
+    final public function __construct(string $name, int $ttl = self::DEFAULT_TTL)
     {
         $this->name = $name;
         $this->ttl  = $ttl;
