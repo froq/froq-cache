@@ -71,7 +71,7 @@ abstract class Agent implements AgentInterface
      * @param  string $name
      * @return self
      */
-    final public function setName(string $name): self
+    final public function setName(string $name): AgentInterface
     {
         $this->name = $name;
 
@@ -92,7 +92,7 @@ abstract class Agent implements AgentInterface
      * @param  int $ttl
      * @return self
      */
-    final public function setTtl(int $ttl): self
+    final public function setTtl(int $ttl): AgentInterface
     {
         $this->ttl = $ttl;
 
@@ -113,7 +113,7 @@ abstract class Agent implements AgentInterface
      * @param  object $client
      * @return self
      */
-    final public function setClient($client): self
+    final public function setClient($client): AgentInterface
     {
         $this->client = $client;
 
