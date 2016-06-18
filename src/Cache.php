@@ -23,6 +23,9 @@ declare(strict_types=1);
 
 namespace Froq\Cache;
 
+use Froq\Cache\Agent\AgentInterface;
+use Froq\Cache\Agent\{Memcached};
+
 /**
  * @package    Froq
  * @subpackage Froq\Cache
@@ -41,4 +44,18 @@ final class Cache
      */
     final private function __construct()
     {}
+
+    /**
+     * Init agent.
+     * @param  string $name
+     * @return Froq\Cache\Agent\AgentInterface
+     */
+    final public function initAgent(string $name): AgentInterface
+    {
+        switch (strtolower($name)) {
+            case 'memcached':
+                return new
+                break;
+        }
+    }
 }
