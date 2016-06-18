@@ -50,8 +50,8 @@ abstract class Agent
      */
     final public function __construct(string $name, int $ttl)
     {
-        $this->setName($name);
-        $this->setTtl($ttl);
+        $this->name = $name;
+        $this->ttl  = $ttl;
     }
 
     /**
