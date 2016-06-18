@@ -1,0 +1,15 @@
+{
+    "name": "froq/froq-cache",
+    "homepage": "https://github.com/froq/froq-cache",
+    "description":  "Cache modul for Froq!",
+    "keywords": ["froq", "cache"],
+    "license": "GNU General Public License v3.0",
+    "authors": [
+        {"name": "Kerem Güneş", "email": "k-gun@mail.com"}
+    ],
+    "require": {
+        "php": "^7.0",
+        "froq/froq": "~1.0"
+    },
+    "minimum-stability": "stable"
+}
