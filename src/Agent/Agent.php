@@ -29,7 +29,7 @@ namespace Froq\Cache\Agent;
  * @object     Froq\Cache\Agent\Agent
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-abstract class Agent
+abstract class Agent implements AgentInterface
 {
     /**
      * Default TTL (1 minute).
