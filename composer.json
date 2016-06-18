@@ -1,7 +1,7 @@
 {
     "name": "froq/froq-cache",
     "homepage": "https://github.com/froq/froq-cache",
-    "description":  "Cache modul for Froq!",
+    "description":  "Cache module for Froq!",
     "keywords": ["froq", "cache"],
     "license": "GNU General Public License v3.0",
     "authors": [
