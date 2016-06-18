@@ -50,10 +50,13 @@ final class Memcached extends Agent
      * @param string $host
      * @param int    $port
      */
-    final public function __construct(string $host = 'localhost', int $port = 11211)
+    final public function __construct(string $host = 'localhost', int $port = 11211,
+        int $ttl = Agent::DEFAULT_TTL)
     {
         $this->host = $host;
         $this->port = $port;
+
+        parent::__construct('memcached', $ttl);
     }
 
     /**
