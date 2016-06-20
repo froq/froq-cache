@@ -82,4 +82,41 @@ final class Memcached extends Agent
 
         return $this;
     }
+
+    /**
+     * Set.
+     * @param  string $key
+     * @param  any    $value
+     * @param  int    $ttl
+     * @return bool
+     */
+    final public function set(string $key, $value, int $ttl = Agent::DEFAULT_TTL): bool
+    {
+        $this->client->set($key, $value, $ttl);
+    }
+
+    /**
+     * Get.
+     * @param  string $key
+     * @param  any    $valueDefault
+     * @return any
+     */
+    final public function get(string $key, $valueDefault = null)
+    {
+        $value = $this->client->get($key);
+        if ($this->client->getResultCode() == \Memcached::RES_NOTFOUND) {
+            $value = $valueDefault;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Delete.
+     * @return bool
+     */
+    final public function delete(string $key): bool
+    {
+        return $this->client->delete($key);
+    }
 }
