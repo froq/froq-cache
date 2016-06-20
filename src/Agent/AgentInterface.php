@@ -58,5 +58,5 @@ interface AgentInterface
      * Delete.
      * @return bool
      */
-    public function delete(): bool;
+    public function delete(string $key): bool;
 }
