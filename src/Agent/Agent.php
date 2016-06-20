@@ -63,9 +63,9 @@ abstract class Agent implements AgentInterface
     /**
      * Set name.
      * @param  string $name
-     * @return Froq\Cache\Agent\AgentInterface
+     * @return self
      */
-    final public function setName(string $name): AgentInterface
+    final public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -84,9 +84,9 @@ abstract class Agent implements AgentInterface
     /**
      * Set TTL.
      * @param  int $ttl
-     * @return Froq\Cache\Agent\AgentInterface
+     * @return self
      */
-    final public function setTtl(int $ttl): AgentInterface
+    final public function setTtl(int $ttl): self
     {
         $this->ttl = $ttl;
 
