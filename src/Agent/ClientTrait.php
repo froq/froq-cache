@@ -38,6 +38,18 @@ trait ClientTrait
     private $client;
 
     /**
+     * Host.
+     * @var string
+     */
+    private $host;
+
+    /**
+     * Port.
+     * @var int
+     */
+    private $port;
+
+    /**
      * Set client.
      * @param  object $client
      * @return self
@@ -56,5 +68,47 @@ trait ClientTrait
     final public function getClient()
     {
         return $this->client;
+    }
+
+    /**
+     * Set host.
+     * @param  string $host
+     * @return self
+     */
+    final public function setHost(string $host): self
+    {
+        $this->host = $host;
+
+        return $this;
+    }
+
+    /**
+     * Get host.
+     * @return string
+     */
+    final public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    /**
+     * Set port
+     * @param  int $port
+     * @return self
+     */
+    final public function setPort(int $port): self
+    {
+        $this->port = $port;
+
+        return $this;
+    }
+
+    /**
+     * Get port.
+     * @return int
+     */
+    final public function getPort(): int
+    {
+        return $this->port;
     }
 }

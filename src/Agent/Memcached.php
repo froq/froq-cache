@@ -52,18 +52,6 @@ final class Memcached extends Agent
     const DEFAULT_PORT = 11211;
 
     /**
-     * Host.
-     * @var string
-     */
-    private $host = self::DEFAULT_HOST;
-
-    /**
-     * Port
-     * @var int
-     */
-    private $port = self::DEFAULT_PORT;
-
-    /**
      * Constructor.
      * @param string $host
      * @param int    $port
@@ -75,48 +63,6 @@ final class Memcached extends Agent
         $this->port = $port;
 
         parent::__construct('memcached', $ttl);
-    }
-
-    /**
-     * Set host.
-     * @param  string $host
-     * @return self
-     */
-    final public function setHost(string $host): self
-    {
-        $this->host = $host;
-
-        return $this;
-    }
-
-    /**
-     * Get host.
-     * @return string
-     */
-    final public function getHost(): string
-    {
-        return $this->host;
-    }
-
-    /**
-     * Set port
-     * @param  int $port
-     * @return self
-     */
-    final public function setPort(int $port): self
-    {
-        $this->port = $port;
-
-        return $this;
-    }
-
-    /**
-     * Get port.
-     * @return int
-     */
-    final public function getPort(): int
-    {
-        return $this->port;
     }
 
     /**
