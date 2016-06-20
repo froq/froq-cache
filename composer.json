@@ -10,5 +10,7 @@
     "require": {
         "php": "^7.0"
     },
-    "minimum-stability": "stable"
+    "autoload": {
+        "classmap": ["src/"]
+    }
 }
