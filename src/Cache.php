@@ -44,6 +44,12 @@ final class Cache
           AGENT_MEMCACHED = 'memcached';
 
     /**
+     * Agents.
+     * @var array
+     */
+    private static $agents = [];
+
+    /**
      * Constructor.
      */
     final private function __construct()
@@ -55,8 +61,15 @@ final class Cache
      * @param  array  $options
      * @return Froq\Cache\Agent\AgentInterface
      */
-    final public function init(string $name, array $options = null): AgentInterface
+    final public static function init(string $name, array $options = null): AgentInterface
     {
+        // default = true
+        $once = (bool) ($options['once'] ?? true);
+
+        if ($once && isset(self::$agents[$name])) {
+            return self::$agents[$name];
+        }
+
         $agent = null;
         switch (strtolower($name)) {
             // only memcached for now
@@ -67,7 +80,7 @@ final class Cache
                 throw new CacheException("Unimplemented agent '{$name}' given!");
         }
 
-        // chec/set options
+        // check/set options
         if ($agent != null) {
             isset($options['host'])
                 && $agent->setHost($options['host']);
@@ -75,6 +88,13 @@ final class Cache
                 && $agent->setPort($options['port']);
             isset($options['ttl'])
                 && $agent->setTtl($options['ttl']);
+        }
+
+        // init (connect etc)
+        $agent->init();
+
+        if ($once) {
+            self::$agents[$name] = $agent;
         }
 
         return $agent;
@@ -85,8 +105,8 @@ final class Cache
      * @param  array $options
      * @return Froq\Cache\Agent\Memcached
      */
-    final public function initMemcached(array $options = null): Memcached
+    final public static function initMemcached(array $options = null): Memcached
     {
-        return $this->init(self::AGENT_MEMCACHED, $options);
+        return self::init(self::AGENT_MEMCACHED, $options);
     }
 }
