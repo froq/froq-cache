@@ -67,9 +67,9 @@ final class Memcached extends Agent
 
     /**
      * Init.
-     * @return void
+     * @return Froq\Cache\Agent\AgentInterface
      */
-    final public function init()
+    final public function init(): AgentInterface
     {
         if (empty($this->host) || empty($this->port)) {
             throw new CacheException("'host' and 'port' cannot be empty!");
@@ -79,5 +79,7 @@ final class Memcached extends Agent
         $client->addServer($this->host, $this->port);
 
         $this->setClient($client);
+
+        return $this;
     }
 }
