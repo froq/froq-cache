@@ -92,7 +92,7 @@ final class Memcached extends Agent
      */
     final public function set(string $key, $value, int $ttl = Agent::DEFAULT_TTL): bool
     {
-        $this->client->set($key, $value, $ttl);
+        return $this->client->set($key, $value, $ttl);
     }
 
     /**
