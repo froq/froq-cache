@@ -40,24 +40,36 @@ final class Memcached extends Agent
     use ClientTrait;
 
     /**
+     * Default host.
+     * @const string
+     */
+    const DEFAULT_HOST = '127.0.0.1';
+
+    /**
+     * Default port.
+     * @const int
+     */
+    const DEFAULT_PORT = 11211;
+
+    /**
      * Host.
      * @var string
      */
-    private $host = 'localhost';
+    private $host = self::DEFAULT_HOST;
 
     /**
      * Port
      * @var int
      */
-    private $port = 11211;
+    private $port = self::DEFAULT_PORT;
 
     /**
      * Constructor.
      * @param string $host
      * @param int    $port
      */
-    final public function __construct(string $host = 'localhost', int $port = 11211,
-        int $ttl = Agent::DEFAULT_TTL)
+    final public function __construct(string $host = self::DEFAULT_HOST, int $port = self::DEFAULT_PORT,
+        int $ttl = self::DEFAULT_TTL)
     {
         $this->host = $host;
         $this->port = $port;
