@@ -34,10 +34,10 @@ use Froq\Cache\CacheException;
 final class Memcached extends Agent
 {
     /**
-     * Agent client trait.
-     * @object Froq\Agent\Agent\AgentClientTrait
+     * Client trait.
+     * @object Froq\Agent\Agent\ClientTrait
      */
-    use AgentClientTrait;
+    use ClientTrait;
 
     /**
      * Host.
