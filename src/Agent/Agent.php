@@ -50,12 +50,6 @@ abstract class Agent implements AgentInterface
     private $ttl;
 
     /**
-     * Client
-     * @var any
-     */
-    private $client;
-
-    /**
      * Constructor.
      * @param string $name
      * @param int    $ttl
@@ -106,26 +100,5 @@ abstract class Agent implements AgentInterface
     final public function getTtl(): int
     {
         return $this->ttl;
-    }
-
-    /**
-     * Set client.
-     * @param  object $client
-     * @return self
-     */
-    final public function setClient($client): AgentInterface
-    {
-        $this->client = $client;
-
-        return $this;
-    }
-
-    /**
-     * Get client.
-     * @return object
-     */
-    final public function getClient()
-    {
-        return $this->client;
     }
 }
