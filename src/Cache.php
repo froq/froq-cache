@@ -34,6 +34,10 @@ use Froq\Cache\Agent\{Memcached};
  */
 final class Cache
 {
+    /**
+     * Agent names.
+     * @const string
+     */
     const AGENT_APC = 'apc',
           AGENT_FILE = 'file',
           AGENT_REDIS = 'redis',
@@ -48,14 +52,41 @@ final class Cache
     /**
      * Init agent.
      * @param  string $name
+     * @param  array  $options
      * @return Froq\Cache\Agent\AgentInterface
      */
-    final public function initAgent(string $name): AgentInterface
+    final public function init(string $name, array $options = null): AgentInterface
     {
+        $agent = null;
         switch (strtolower($name)) {
-            case 'memcached':
-                return new
+            // only memcached for now
+            case self::AGENT_MEMCACHED:
+                $agent = new Memcached();
                 break;
+            default:
+                throw new CacheException("Unimplemented agent '{$name}' given!");
         }
+
+        // chec/set options
+        if ($agent != null) {
+            isset($options['host'])
+                && $agent->setHost($options['host']);
+            isset($options['port'])
+                && $agent->setPort($options['port']);
+            isset($options['ttl'])
+                && $agent->setTtl($options['ttl']);
+        }
+
+        return $agent;
+    }
+
+    /**
+     * Init memcached.
+     * @param  array $options
+     * @return Froq\Cache\Agent\Memcached
+     */
+    final public function initMemcached(array $options = null): Memcached
+    {
+        return $this->init(self::AGENT_MEMCACHED, $options);
     }
 }
