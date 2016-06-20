@@ -56,7 +56,7 @@ final class Cache
     {}
 
     /**
-     * Init agent.
+     * Init.
      * @param  string $name
      * @param  array  $options
      * @return Froq\Cache\Agent\AgentInterface
