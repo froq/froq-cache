@@ -54,7 +54,7 @@ trait ClientTrait
      * @param  object $client
      * @return self
      */
-    final public function setClient($client): AgentInterface
+    final public function setClient($client): self
     {
         $this->client = $client;
 
