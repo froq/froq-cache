@@ -60,6 +60,10 @@ final class Memcached extends Agent
     final public function __construct(string $host = self::DEFAULT_HOST, int $port = self::DEFAULT_PORT,
         int $ttl = self::DEFAULT_TTL)
     {
+        if (!extension_loaded('memcached')) {
+            throw new CacheException("Redis extension not found!");
+        }
+
         $this->host = $host;
         $this->port = $port;
 
@@ -114,7 +118,6 @@ final class Memcached extends Agent
 
     /**
      * Delete.
-     * @param  string $key
      * @return bool
      */
     final public function delete(string $key): bool
