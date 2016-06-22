@@ -57,8 +57,8 @@ final class Cache
 
     /**
      * Init.
-     * @param  string $name
-     * @param  array  $options
+     * @param  string     $name
+     * @param  array|null $options
      * @return Froq\Cache\Agent\AgentInterface
      */
     final public static function init(string $name, array $options = null): AgentInterface
@@ -107,7 +107,7 @@ final class Cache
 
     /**
      * Init memcached.
-     * @param  array $options
+     * @param  array|null $options
      * @return Froq\Cache\Agent\Memcached
      */
     final public static function initMemcached(array $options = null): Memcached
@@ -117,7 +117,7 @@ final class Cache
 
     /**
      * Init redis.
-     * @param  array $options
+     * @param  array|null $options
      * @return Froq\Cache\Agent\Redis
      */
     final public static function initRedis(array $options = null): Redis
@@ -127,7 +127,7 @@ final class Cache
 
     /**
      * Init apcu.
-     * @param  array $options
+     * @param  array|null $options
      * @return Froq\Cache\Agent\Apcu
      */
     final public static function initApcu(array $options = null): Apcu
