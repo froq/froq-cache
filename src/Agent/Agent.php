@@ -41,13 +41,13 @@ abstract class Agent implements AgentInterface
      * Name.
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * TTL.
      * @var int
      */
-    private $ttl;
+    protected $ttl;
 
     /**
      * Constructor.
