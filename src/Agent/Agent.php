@@ -32,18 +32,6 @@ namespace Froq\Cache\Agent;
 abstract class Agent implements AgentInterface
 {
     /**
-     * Default host.
-     * @const string
-     */
-    const DEFAULT_HOST = '127.0.0.1';
-
-    /**
-     * Default port.
-     * @const int
-     */
-    const DEFAULT_PORT = 11211;
-
-    /**
      * Default TTL (1 minute).
      * @const int
      */
