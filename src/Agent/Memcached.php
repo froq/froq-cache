@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace Froq\Cache\Agent;
 
+use Froq\Cache\Cache;
 use Froq\Cache\CacheException;
 
 /**
@@ -50,7 +51,7 @@ final class Memcached extends Agent
         $this->host = $host;
         $this->port = $port;
 
-        parent::__construct('memcached', $ttl);
+        parent::__construct(Cache::AGENT_MEMCACHED, $ttl);
     }
 
     /**
