@@ -41,6 +41,10 @@ final class Apcu extends Agent
      */
     final public function __construct(int $ttl = self::DEFAULT_TTL)
     {
+        if (!extension_loaded('apcu')) {
+            throw new CacheException("APCu extension not found!");
+        }
+
         parent::__construct(Cache::AGENT_APCU, $ttl);
     }
 
@@ -83,7 +87,6 @@ final class Apcu extends Agent
 
     /**
      * Delete.
-     * @param  string $key
      * @return bool
      */
     final public function delete(string $key): bool
