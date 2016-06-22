@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Froq\Cache;
 
 use Froq\Cache\Agent\AgentInterface;
-use Froq\Cache\Agent\{Memcached};
+use Froq\Cache\Agent\{Redis, Memcached};
 
 /**
  * @package    Froq
@@ -72,9 +72,11 @@ final class Cache
 
         $agent = null;
         switch (strtolower($name)) {
-            // only memcached for now
             case self::AGENT_MEMCACHED:
                 $agent = new Memcached();
+                break;
+            case self::AGENT_REDIS:
+                $agent = new Redis();
                 break;
             default:
                 throw new CacheException("Unimplemented agent '{$name}' given!");
@@ -108,5 +110,15 @@ final class Cache
     final public static function initMemcached(array $options = null): Memcached
     {
         return self::init(self::AGENT_MEMCACHED, $options);
+    }
+
+    /**
+     * Init redis.
+     * @param  array $options
+     * @return Froq\Cache\Agent\Redis
+     */
+    final public static function initRedis(array $options = null): Redis
+    {
+        return self::init(self::AGENT_REDIS, $options);
     }
 }
