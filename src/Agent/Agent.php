@@ -32,6 +32,18 @@ namespace Froq\Cache\Agent;
 abstract class Agent implements AgentInterface
 {
     /**
+     * Default host.
+     * @const string
+     */
+    const DEFAULT_HOST = '127.0.0.1';
+
+    /**
+     * Default port.
+     * @const int
+     */
+    const DEFAULT_PORT = 11211;
+
+    /**
      * Default TTL (1 minute).
      * @const int
      */
@@ -56,18 +68,18 @@ abstract class Agent implements AgentInterface
      */
     public function __construct(string $name, int $ttl = self::DEFAULT_TTL)
     {
-        $this->name = strtolower($name);
-        $this->ttl  = $ttl;
+        $this->setName($name);
+        $this->setTtl($ttl);
     }
 
     /**
      * Set name.
      * @param  string $name
-     * @return Froq\Cache\Agent\AgentInterface
+     * @return self
      */
-    final public function setName(string $name): AgentInterface
+    final public function setName(string $name): self
     {
-        $this->name = $name;
+        $this->name = strtolower($name);
 
         return $this;
     }
@@ -84,9 +96,9 @@ abstract class Agent implements AgentInterface
     /**
      * Set TTL.
      * @param  int $ttl
-     * @return Froq\Cache\Agent\AgentInterface
+     * @return self
      */
-    final public function setTtl(int $ttl): AgentInterface
+    final public function setTtl(int $ttl): self
     {
         $this->ttl = $ttl;
 

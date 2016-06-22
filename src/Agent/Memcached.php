@@ -40,18 +40,6 @@ final class Memcached extends Agent
     use ClientTrait;
 
     /**
-     * Default host.
-     * @const string
-     */
-    const DEFAULT_HOST = '127.0.0.1';
-
-    /**
-     * Default port.
-     * @const int
-     */
-    const DEFAULT_PORT = 11211;
-
-    /**
      * Constructor.
      * @param string $host
      * @param int    $port
@@ -81,5 +69,42 @@ final class Memcached extends Agent
         $this->setClient($client);
 
         return $this;
+    }
+
+    /**
+     * Set.
+     * @param  string $key
+     * @param  any    $value
+     * @param  int    $ttl
+     * @return bool
+     */
+    final public function set(string $key, $value, int $ttl = Agent::DEFAULT_TTL): bool
+    {
+        return $this->client->set($key, $value, $ttl);
+    }
+
+    /**
+     * Get.
+     * @param  string $key
+     * @param  any    $valueDefault
+     * @return any
+     */
+    final public function get(string $key, $valueDefault = null)
+    {
+        $value = $this->client->get($key);
+        if ($this->client->getResultCode() == \Memcached::RES_NOTFOUND) {
+            $value = $valueDefault;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Delete.
+     * @return bool
+     */
+    final public function delete(string $key): bool
+    {
+        return $this->client->delete($key);
     }
 }
