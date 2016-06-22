@@ -60,6 +60,10 @@ final class Redis extends Agent
     final public function __construct(string $host = self::DEFAULT_HOST, int $port = self::DEFAULT_PORT,
         int $ttl = self::DEFAULT_TTL)
     {
+        if (!extension_loaded('redis')) {
+            throw new CacheException("Redis extension not found!");
+        }
+
         $this->host = $host;
         $this->port = $port;
 
