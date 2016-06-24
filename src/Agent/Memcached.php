@@ -118,6 +118,7 @@ final class Memcached extends Agent
 
     /**
      * Delete.
+     * @param  string $key
      * @return bool
      */
     final public function delete(string $key): bool
