@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace Froq\Cache;
 
 use Froq\Cache\Agent\AgentInterface;
-use Froq\Cache\Agent\{Apcu, Redis, Memcached};
+use Froq\Cache\Agent\{File, Apcu, Redis, Memcached};
 
 /**
  * @package    Froq
@@ -38,8 +38,8 @@ final class Cache
      * Agent names.
      * @const string
      */
-    const AGENT_APCU      = 'apcu',
-          AGENT_FILE      = 'file',
+    const AGENT_FILE      = 'file',
+          AGENT_APCU      = 'apcu',
           AGENT_REDIS     = 'redis',
           AGENT_MEMCACHED = 'memcached';
 
@@ -106,13 +106,23 @@ final class Cache
     }
 
     /**
-     * Init memcached.
-     * @param  array|null $options
-     * @return Froq\Cache\Agent\Memcached
+     * Init file.
+     * @param  array $options
+     * @return Froq\Cache\Agent\File
      */
-    final public static function initMemcached(array $options = null): Memcached
+    final public static function initFile(array $options = null): File
     {
-        return self::init(self::AGENT_MEMCACHED, $options);
+        return self::init(self::AGENT_FILE, $options);
+    }
+
+    /**
+     * Init apcu.
+     * @param  array|null $options
+     * @return Froq\Cache\Agent\Apcu
+     */
+    final public static function initApcu(array $options = null): Apcu
+    {
+        return self::init(self::AGENT_APCU, $options);
     }
 
     /**
@@ -126,12 +136,12 @@ final class Cache
     }
 
     /**
-     * Init apcu.
+     * Init memcached.
      * @param  array|null $options
-     * @return Froq\Cache\Agent\Apcu
+     * @return Froq\Cache\Agent\Memcached
      */
-    final public static function initApcu(array $options = null): Apcu
+    final public static function initMemcached(array $options = null): Memcached
     {
-        return self::init(self::AGENT_APCU, $options);
+        return self::init(self::AGENT_MEMCACHED, $options);
     }
 }
