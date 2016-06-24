@@ -97,6 +97,10 @@ final class Cache
             if (isset($options['port']) && method_exists($agent, 'setPort')) {
                 $agent->setPort($options['port']);
             }
+            // set dir (for file)
+            if (isset($options['dir']) && method_exists($agent, 'setDir')) {
+                $agent->setDir($options['dir']);
+            }
             // set ttle if provided
             isset($options['ttl']) && $agent->setTtl($options['ttl']);
         }
