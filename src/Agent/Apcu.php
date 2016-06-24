@@ -64,9 +64,9 @@ final class Apcu extends Agent
      * @param  int    $ttl
      * @return bool
      */
-    final public function set(string $key, $value, int $ttl = Agent::DEFAULT_TTL): bool
+    final public function set(string $key, $value, int $ttl = null): bool
     {
-        return apcu_store($key, $value, $ttl);
+        return apcu_store($key, $value, ($ttl ?? $this->ttl));
     }
 
     /**
