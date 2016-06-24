@@ -59,9 +59,9 @@ final class Apcu extends Agent
 
     /**
      * Set.
-     * @param  string $key
-     * @param  any    $value
-     * @param  int    $ttl
+     * @param  string   $key
+     * @param  any      $value
+     * @param  int|null $ttl
      * @return bool
      */
     final public function set(string $key, $value, int $ttl = null): bool
