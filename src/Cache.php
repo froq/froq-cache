@@ -90,7 +90,7 @@ final class Cache
 
         // check/set options
         if ($agent != null) {
-            // set ttle if provided
+            // set ttl if provided
             isset($options['ttl']) && $agent->setTtl($options['ttl']);
 
             // set host/port if provided (redis, memcached)
