@@ -85,26 +85,23 @@ final class Cache
                 $agent = new Memcached();
                 break;
             default:
-                throw new CacheException("Unimplemented agent '{$name}' given!");
+                throw new CacheException("Unimplemented agent name '{$name}' given!");
         }
 
-        // check/set options
-        if ($agent != null) {
-            // set ttl if provided
-            isset($options['ttl']) && $agent->setTtl($options['ttl']);
+        // set ttl if provided
+        isset($options['ttl']) && $agent->setTtl($options['ttl']);
 
-            // set host/port if provided (redis, memcached)
-            if (isset($options['host']) && method_exists($agent, 'setHost')) {
-                $agent->setHost($options['host']);
-            }
-            if (isset($options['port']) && method_exists($agent, 'setPort')) {
-                $agent->setPort($options['port']);
-            }
+        // set host/port if provided (redis, memcached)
+        if (isset($options['host']) && method_exists($agent, 'setHost')) {
+            $agent->setHost($options['host']);
+        }
+        if (isset($options['port']) && method_exists($agent, 'setPort')) {
+            $agent->setPort($options['port']);
+        }
 
-            // set dir (file)
-            if (isset($options['dir']) && method_exists($agent, 'setDir')) {
-                $agent->setDir($options['dir']);
-            }
+        // set dir (file)
+        if (isset($options['dir']) && method_exists($agent, 'setDir')) {
+            $agent->setDir($options['dir']);
         }
 
         // init (connect etc)
