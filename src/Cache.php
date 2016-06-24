@@ -72,14 +72,17 @@ final class Cache
 
         $agent = null;
         switch (strtolower($name)) {
-            case self::AGENT_MEMCACHED:
-                $agent = new Memcached();
+            case self::AGENT_FILE:
+                $agent = new File();
+                break;
+            case self::AGENT_APCU:
+                $agent = new Apcu();
                 break;
             case self::AGENT_REDIS:
                 $agent = new Redis();
                 break;
-            case self::AGENT_APCU:
-                $agent = new Apcu();
+            case self::AGENT_MEMCACHED:
+                $agent = new Memcached();
                 break;
             default:
                 throw new CacheException("Unimplemented agent '{$name}' given!");
