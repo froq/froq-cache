@@ -90,19 +90,21 @@ final class Cache
 
         // check/set options
         if ($agent != null) {
-            // set host/port if provided
+            // set ttle if provided
+            isset($options['ttl']) && $agent->setTtl($options['ttl']);
+
+            // set host/port if provided (redis, memcached)
             if (isset($options['host']) && method_exists($agent, 'setHost')) {
                 $agent->setHost($options['host']);
             }
             if (isset($options['port']) && method_exists($agent, 'setPort')) {
                 $agent->setPort($options['port']);
             }
-            // set dir (for file)
+
+            // set dir (file)
             if (isset($options['dir']) && method_exists($agent, 'setDir')) {
                 $agent->setDir($options['dir']);
             }
-            // set ttle if provided
-            isset($options['ttl']) && $agent->setTtl($options['ttl']);
         }
 
         // init (connect etc)
