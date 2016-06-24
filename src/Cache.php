@@ -90,12 +90,15 @@ final class Cache
 
         // check/set options
         if ($agent != null) {
-            isset($options['host'])
-                && $agent->setHost($options['host']);
-            isset($options['port'])
-                && $agent->setPort($options['port']);
-            isset($options['ttl'])
-                && $agent->setTtl($options['ttl']);
+            // set host/port if provided
+            if (isset($options['host']) && method_exists($agent, 'setHost')) {
+                $agent->setHost($options['host']);
+            }
+            if (isset($options['port']) && method_exists($agent, 'setPort')) {
+                $agent->setPort($options['port']);
+            }
+            // set ttle if provided
+            isset($options['ttl']) && $agent->setTtl($options['ttl']);
         }
 
         // init (connect etc)
