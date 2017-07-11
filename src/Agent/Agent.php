@@ -32,7 +32,7 @@ namespace Froq\Cache\Agent;
 abstract class Agent implements AgentInterface
 {
     /**
-     * Default TTL (1 minute).
+     * Default TTL (1 hour).
      * @const int
      */
     const DEFAULT_TTL = 3600;
