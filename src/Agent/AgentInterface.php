@@ -25,7 +25,7 @@ namespace Froq\Cache\Agent;
 
 /**
  * @package    Froq
- * @subpackage Froq\Cache\Agent
+ * @subpackage Froq\Cache
  * @object     Froq\Cache\Agent\AgentInterface
  * @author     Kerem Güneş <k-gun@mail.com>
  */

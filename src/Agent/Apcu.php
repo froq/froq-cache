@@ -28,7 +28,7 @@ use Froq\Cache\CacheException;
 
 /**
  * @package    Froq
- * @subpackage Froq\Cache\Agent
+ * @subpackage Froq\Cache
  * @object     Froq\Cache\Agent\Apcu
  * @author     Kerem Güneş <k-gun@mail.com>
  */
