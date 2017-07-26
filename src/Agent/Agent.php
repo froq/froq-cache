@@ -35,7 +35,7 @@ abstract class Agent implements AgentInterface
      * Default TTL (1 hour).
      * @const int
      */
-    const DEFAULT_TTL = 3600;
+    const TTL = 3600;
 
     /**
      * Name.
@@ -54,7 +54,7 @@ abstract class Agent implements AgentInterface
      * @param string $name
      * @param int    $ttl
      */
-    public function __construct(string $name, int $ttl = self::DEFAULT_TTL)
+    public function __construct(string $name, int $ttl = self::TTL)
     {
         $this->setName($name);
         $this->setTtl($ttl);
@@ -65,7 +65,7 @@ abstract class Agent implements AgentInterface
      * @param  string $name
      * @return self
      */
-    final public function setName(string $name): self
+    public final function setName(string $name): self
     {
         $this->name = strtolower($name);
 
@@ -76,7 +76,7 @@ abstract class Agent implements AgentInterface
      * Get name.
      * @return string
      */
-    final public function getName(): string
+    public final function getName(): string
     {
         return $this->name;
     }
@@ -86,7 +86,7 @@ abstract class Agent implements AgentInterface
      * @param  int $ttl
      * @return self
      */
-    final public function setTtl(int $ttl): self
+    public final function setTtl(int $ttl): self
     {
         $this->ttl = $ttl;
 
@@ -97,7 +97,7 @@ abstract class Agent implements AgentInterface
      * Get TTL.
      * @return int
      */
-    final public function getTtl(): int
+    public final function getTtl(): int
     {
         return $this->ttl;
     }

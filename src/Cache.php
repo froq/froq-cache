@@ -44,15 +44,15 @@ final class Cache
           AGENT_MEMCACHED = 'memcached';
 
     /**
-     * Agents.
+     * Instances.
      * @var array
      */
-    private static $agents = [];
+    private static $instances = [];
 
     /**
      * Constructor.
      */
-    final private function __construct()
+    private function __construct()
     {}
 
     /**
@@ -61,13 +61,13 @@ final class Cache
      * @param  array|null $options
      * @return Froq\Cache\Agent\AgentInterface
      */
-    final public static function init(string $name, array $options = null): AgentInterface
+    public static function init(string $name, array $options = null): AgentInterface
     {
         // default = true
         $once = (bool) ($options['once'] ?? true);
 
-        if ($once && isset(self::$agents[$name])) {
-            return self::$agents[$name];
+        if ($once && isset(self::$instances[$name])) {
+            return self::$instances[$name];
         }
 
         $agent = null;
@@ -89,7 +89,9 @@ final class Cache
         }
 
         // set ttl if provided
-        isset($options['ttl']) && $agent->setTtl($options['ttl']);
+        if (isset($options['ttl'])) {
+            $agent->setTtl($options['ttl']);
+        }
 
         // set host/port if provided (redis, memcached)
         if (isset($options['host']) && method_exists($agent, 'setHost')) {
@@ -108,7 +110,7 @@ final class Cache
         $agent->init();
 
         if ($once) {
-            self::$agents[$name] = $agent;
+            self::$instances[$name] = $agent;
         }
 
         return $agent;
@@ -119,7 +121,7 @@ final class Cache
      * @param  array $options
      * @return Froq\Cache\Agent\File
      */
-    final public static function initFile(array $options = null): File
+    public static function initFile(array $options = null): File
     {
         return self::init(self::AGENT_FILE, $options);
     }
@@ -129,7 +131,7 @@ final class Cache
      * @param  array|null $options
      * @return Froq\Cache\Agent\Apcu
      */
-    final public static function initApcu(array $options = null): Apcu
+    public static function initApcu(array $options = null): Apcu
     {
         return self::init(self::AGENT_APCU, $options);
     }
@@ -139,7 +141,7 @@ final class Cache
      * @param  array|null $options
      * @return Froq\Cache\Agent\Redis
      */
-    final public static function initRedis(array $options = null): Redis
+    public static function initRedis(array $options = null): Redis
     {
         return self::init(self::AGENT_REDIS, $options);
     }
@@ -149,7 +151,7 @@ final class Cache
      * @param  array|null $options
      * @return Froq\Cache\Agent\Memcached
      */
-    final public static function initMemcached(array $options = null): Memcached
+    public static function initMemcached(array $options = null): Memcached
     {
         return self::init(self::AGENT_MEMCACHED, $options);
     }

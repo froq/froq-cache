@@ -39,7 +39,7 @@ final class Apcu extends Agent
      * @param string $host
      * @param int    $port
      */
-    final public function __construct(int $ttl = self::DEFAULT_TTL)
+    public function __construct(int $ttl = self::TTL)
     {
         if (!extension_loaded('apcu')) {
             throw new CacheException("APCu extension not found!");
@@ -52,7 +52,7 @@ final class Apcu extends Agent
      * Init.
      * @return Froq\Cache\Agent\AgentInterface
      */
-    final public function init(): AgentInterface
+    public function init(): AgentInterface
     {
         return $this;
     }
@@ -64,7 +64,7 @@ final class Apcu extends Agent
      * @param  int|null $ttl
      * @return bool
      */
-    final public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, $value, int $ttl = null): bool
     {
         return apcu_store($key, $value, ($ttl ?? $this->ttl));
     }
@@ -75,11 +75,14 @@ final class Apcu extends Agent
      * @param  any    $valueDefault
      * @return any
      */
-    final public function get(string $key, $valueDefault = null)
+    public function get(string $key, $valueDefault = null)
     {
-        $value = apcu_fetch($key, $ok);
-        if (!$ok) {
-            $value = $valueDefault;
+        $value = $valueDefault;
+        if (apcu_exists($key)) {
+            $value = apcu_fetch($key, $ok);
+            if (!$ok) {
+                $value = $valueDefault;
+            }
         }
 
         return $value;
@@ -90,7 +93,7 @@ final class Apcu extends Agent
      * @param  string $key
      * @return bool
      */
-    final public function delete(string $key): bool
+    public function delete(string $key): bool
     {
         return apcu_delete($key);
     }

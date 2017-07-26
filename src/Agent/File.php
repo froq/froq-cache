@@ -45,7 +45,7 @@ final class File extends Agent
      * @param string $host
      * @param int    $port
      */
-    final public function __construct(string $dir = null, int $ttl = self::DEFAULT_TTL)
+    public function __construct(string $dir = null, int $ttl = self::TTL)
     {
         $this->dir = $dir;
 
@@ -56,7 +56,7 @@ final class File extends Agent
      * Init.
      * @return Froq\Cache\Agent\AgentInterface
      */
-    final public function init(): AgentInterface
+    public function init(): AgentInterface
     {
         if (empty($this->dir)) {
             throw new CacheException('Cache dir cannot be empty!');
@@ -76,7 +76,7 @@ final class File extends Agent
      * @param  int|null $ttl
      * @return bool
      */
-    final public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, $value, int $ttl = null): bool
     {
         $file = $this->toFile($key);
         $fileMTime =@ (int) filemtime($file);
@@ -90,11 +90,12 @@ final class File extends Agent
     /**
      * Get.
      * @param  string $key
-     * @param  any    $value
+     * @param  any    $valueDefault
      * @return any
      */
-    final public function get(string $key, $value = null, int $ttl = null)
+    public function get(string $key, $valueDefault = null, int $ttl = null)
     {
+        $value = $valueDefault;
         $file = $this->toFile($key);
         $fileMTime =@ (int) filemtime($file);
         if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
@@ -111,7 +112,7 @@ final class File extends Agent
      * @param  string $key
      * @return bool
      */
-    final public function delete(string $key): bool
+    public function delete(string $key): bool
     {
         $file = $this->toFile($key);
         if (is_file($file)) {
@@ -127,7 +128,7 @@ final class File extends Agent
      * @param  string $dir
      * @return self
      */
-    final public function setDir(string $dir): self
+    public function setDir(string $dir): self
     {
         $this->dir = $dir;
 
@@ -138,7 +139,7 @@ final class File extends Agent
      * Get dir.
      * @return string|null
      */
-    final public function getDir()
+    public function getDir()
     {
         return $this->dir;
     }
@@ -148,7 +149,7 @@ final class File extends Agent
      * @param  string $key
      * @return string
      */
-    final private function toFile(string $key): string
+    private function toFile(string $key): string
     {
         return sprintf('%s/%s.cache', $this->dir, md5($key));
     }

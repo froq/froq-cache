@@ -41,24 +41,12 @@ final class Memcached extends Agent
     use ClientTrait;
 
     /**
-     * Default host.
-     * @const string
-     */
-    const DEFAULT_HOST = '127.0.0.1';
-
-    /**
-     * Default port.
-     * @const int
-     */
-    const DEFAULT_PORT = 11211;
-
-    /**
      * Constructor.
      * @param string $host
      * @param int    $port
+     * @param int    $ttl
      */
-    final public function __construct(string $host = self::DEFAULT_HOST, int $port = self::DEFAULT_PORT,
-        int $ttl = self::DEFAULT_TTL)
+    public function __construct(string $host = '127.0.0.1', int $port = 11211, int $ttl = self::TTL)
     {
         if (!extension_loaded('memcached')) {
             throw new CacheException("Redis extension not found!");
@@ -74,7 +62,7 @@ final class Memcached extends Agent
      * Init.
      * @return Froq\Cache\Agent\AgentInterface
      */
-    final public function init(): AgentInterface
+    public function init(): AgentInterface
     {
         if (empty($this->host) || empty($this->port)) {
             throw new CacheException("'host' and 'port' cannot be empty!");
@@ -95,7 +83,7 @@ final class Memcached extends Agent
      * @param  int|null $ttl
      * @return bool
      */
-    final public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, $value, int $ttl = null): bool
     {
         return $this->client->set($key, $value, ($ttl ?? $this->ttl));
     }
@@ -106,7 +94,7 @@ final class Memcached extends Agent
      * @param  any    $valueDefault
      * @return any
      */
-    final public function get(string $key, $valueDefault = null)
+    public function get(string $key, $valueDefault = null)
     {
         $value = $this->client->get($key);
         if ($this->client->getResultCode() == \Memcached::RES_NOTFOUND) {
@@ -121,7 +109,7 @@ final class Memcached extends Agent
      * @param  string $key
      * @return bool
      */
-    final public function delete(string $key): bool
+    public function delete(string $key): bool
     {
         return $this->client->delete($key);
     }

@@ -54,7 +54,7 @@ trait ClientTrait
      * @param  object $client
      * @return self
      */
-    final public function setClient($client): self
+    public final function setClient($client): self
     {
         $this->client = $client;
 
@@ -65,7 +65,7 @@ trait ClientTrait
      * Get client.
      * @return object
      */
-    final public function getClient()
+    public final function getClient()
     {
         return $this->client;
     }
@@ -75,7 +75,7 @@ trait ClientTrait
      * @param  string $host
      * @return self
      */
-    final public function setHost(string $host): self
+    public final function setHost(string $host): self
     {
         $this->host = $host;
 
@@ -86,7 +86,7 @@ trait ClientTrait
      * Get host.
      * @return string
      */
-    final public function getHost(): string
+    public final function getHost(): string
     {
         return $this->host;
     }
@@ -96,7 +96,7 @@ trait ClientTrait
      * @param  int $port
      * @return self
      */
-    final public function setPort(int $port): self
+    public final function setPort(int $port): self
     {
         $this->port = $port;
 
@@ -107,7 +107,7 @@ trait ClientTrait
      * Get port.
      * @return int
      */
-    final public function getPort(): int
+    public final function getPort(): int
     {
         return $this->port;
     }

@@ -44,15 +44,15 @@ interface AgentInterface
      * @param  int    $ttl
      * @return bool
      */
-    public function set(string $key, $value, int $ttl = Agent::DEFAULT_TTL): bool;
+    public function set(string $key, $value, int $ttl = Agent::TTL): bool;
 
     /**
      * Get.
      * @param  string $key
-     * @param  any    $value (default)
+     * @param  any    $valueDefault
      * @return any
      */
-    public function get(string $key, $value = null);
+    public function get(string $key, $valueDefault = null);
 
     /**
      * Delete.
