@@ -35,19 +35,19 @@ use Froq\Cache\CacheException;
 final class File extends Agent
 {
     /**
-     * Dir.
+     * Directory.
      * @var string
      */
-    private $dir;
+    private $directory;
 
     /**
      * Constructor.
-     * @param string $host
-     * @param int    $port
+     * @param string $directory
+     * @param int    $ttl
      */
-    public function __construct(string $dir = null, int $ttl = self::TTL)
+    public function __construct(string $directory = null, int $ttl = self::TTL)
     {
-        $this->dir = $dir;
+        $this->directory = $directory;
 
         parent::__construct(Cache::AGENT_FILE, $ttl);
     }
@@ -58,12 +58,16 @@ final class File extends Agent
      */
     public function init(): AgentInterface
     {
-        if (empty($this->dir)) {
-            throw new CacheException('Cache dir cannot be empty!');
+        if (empty($this->directory)) {
+            throw new CacheException('Cache directory cannot be empty!');
         }
 
-        if (!is_dir($this->dir)) {
-            mkdir($this->dir, 0644, true);
+        if (!is_dir($this->directory)) {
+            $ok =@ mkdir($directory, 0644, true);
+            if (!$ok) {
+                throw new CacheException(sprintf('Cannot make directory [%s]!',
+                    strtolower(error_get_last()['message'] ?? '')));
+            }
         }
 
         return $this;
@@ -81,7 +85,7 @@ final class File extends Agent
         $file = $this->toFile($key);
         $fileMTime =@ (int) filemtime($file);
         if ($fileMTime < time() - ($ttl ?? $this->ttl)) {
-            return ((bool) file_put_contents($file, $value, LOCK_EX));
+            return (bool) file_put_contents($file, $value, LOCK_EX);
         }
 
         return true;
@@ -124,24 +128,24 @@ final class File extends Agent
     }
 
     /**
-     * Set dir.
-     * @param  string $dir
+     * Set directory.
+     * @param  string $directory
      * @return self
      */
-    public function setDir(string $dir): self
+    public function setDirectory(string $directory): self
     {
-        $this->dir = $dir;
+        $this->directory = $directory;
 
         return $this;
     }
 
     /**
-     * Get dir.
-     * @return string|null
+     * Get directory.
+     * @return ?string
      */
-    public function getDir()
+    public function getDirectory(): ?string
     {
-        return $this->dir;
+        return $this->directory;
     }
 
     /**
@@ -151,6 +155,6 @@ final class File extends Agent
      */
     private function toFile(string $key): string
     {
-        return sprintf('%s/%s.cache', $this->dir, md5($key));
+        return sprintf('%s/%s.cache', $this->directory, md5($key));
     }
 }
