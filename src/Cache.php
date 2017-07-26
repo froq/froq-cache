@@ -38,10 +38,10 @@ final class Cache
      * Agent names.
      * @const string
      */
-    const AGENT_FILE      = 'file',
-          AGENT_APCU      = 'apcu',
-          AGENT_REDIS     = 'redis',
-          AGENT_MEMCACHED = 'memcached';
+    public const AGENT_FILE      = 'file',
+                 AGENT_APCU      = 'apcu',
+                 AGENT_REDIS     = 'redis',
+                 AGENT_MEMCACHED = 'memcached';
 
     /**
      * Instances.
