@@ -35,7 +35,7 @@ abstract class Agent implements AgentInterface
      * Default TTL (1 hour).
      * @const int
      */
-    const TTL = 3600;
+    public const TTL = 3600;
 
     /**
      * Name.
