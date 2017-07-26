@@ -101,9 +101,9 @@ final class Cache
             $agent->setPort($options['port']);
         }
 
-        // set dir (file)
-        if (isset($options['dir']) && method_exists($agent, 'setDir')) {
-            $agent->setDir($options['dir']);
+        // set directory (for File)
+        if (isset($options['directory']) && method_exists($agent, 'setDirectory')) {
+            $agent->setDirectory($options['directory']);
         }
 
         // init (connect etc)
