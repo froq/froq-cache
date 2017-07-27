@@ -35,10 +35,10 @@ use Froq\Cache\CacheException;
 final class Redis extends Agent
 {
     /**
-     * Client trait.
-     * @object Froq\Agent\Agent\ClientTrait
+     * Agent client trait.
+     * @object Froq\Agent\Agent\AgentClientTrait
      */
-    use ClientTrait;
+    use AgentClientTrait;
 
     /**
      * Constructor.
@@ -49,7 +49,7 @@ final class Redis extends Agent
     public function __construct(string $host = '127.0.0.1', int $port = 6379, int $ttl = self::TTL)
     {
         if (!extension_loaded('redis')) {
-            throw new CacheException("Redis extension not found!");
+            throw new CacheException('Redis extension not found!');
         }
 
         $this->host = $host;

@@ -26,10 +26,10 @@ namespace Froq\Cache\Agent;
 /**
  * @package    Froq
  * @subpackage Froq\Cache
- * @object     Froq\Cache\Agent\ClientTrait
+ * @object     Froq\Cache\Agent\AgentClientTrait
  * @author     Kerem Güneş <k-gun@mail.com>
  */
-trait ClientTrait
+trait AgentClientTrait
 {
     /**
      * Client
