@@ -63,7 +63,7 @@ final class File extends Agent
         }
 
         if (!is_dir($this->directory)) {
-            $ok =@ mkdir($directory, 0644, true);
+            $ok =@ mkdir($this->directory, 0644, true);
             if (!$ok) {
                 throw new CacheException(sprintf('Cannot make directory [%s]!',
                     strtolower(error_get_last()['message'] ?? '')));
