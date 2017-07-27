@@ -74,15 +74,22 @@ final class Cache
         switch (strtolower($name)) {
             case self::AGENT_FILE:
                 $agent = new File();
+                if (isset($options['directory'])) {
+                    $agent->setDirectory($options['directory']);
+                }
                 break;
             case self::AGENT_APCU:
                 $agent = new Apcu();
                 break;
             case self::AGENT_REDIS:
                 $agent = new Redis();
+                if (isset($options['host'])) $agent->setHost($options['host']);
+                if (isset($options['port'])) $agent->setPort($options['port']);
                 break;
             case self::AGENT_MEMCACHED:
                 $agent = new Memcached();
+                if (isset($options['host'])) $agent->setHost($options['host']);
+                if (isset($options['port'])) $agent->setPort($options['port']);
                 break;
             default:
                 throw new CacheException("Unimplemented agent name '{$name}' given!");
@@ -93,20 +100,7 @@ final class Cache
             $agent->setTtl($options['ttl']);
         }
 
-        // set host/port if provided (redis, memcached)
-        if (isset($options['host']) && method_exists($agent, 'setHost')) {
-            $agent->setHost($options['host']);
-        }
-        if (isset($options['port']) && method_exists($agent, 'setPort')) {
-            $agent->setPort($options['port']);
-        }
-
-        // set directory (for File)
-        if (isset($options['directory']) && method_exists($agent, 'setDirectory')) {
-            $agent->setDirectory($options['directory']);
-        }
-
-        // init (connect etc)
+        // connect etc.
         $agent->init();
 
         if ($once) {
