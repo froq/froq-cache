@@ -65,7 +65,7 @@ final class Redis extends Agent
     public function init(): AgentInterface
     {
         if (empty($this->host) || empty($this->port)) {
-            throw new CacheException("'host' and 'port' cannot be empty!");
+            throw new CacheException("'host' or 'port' cannot be empty!");
         }
 
         $client = new \Redis();
