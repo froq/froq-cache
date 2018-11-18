@@ -83,13 +83,21 @@ final class Cache
                 break;
             case self::AGENT_REDIS:
                 $agent = new Redis();
-                if (isset($options['host'])) $agent->setHost($options['host']);
-                if (isset($options['port'])) $agent->setPort($options['port']);
+                if (isset($options['host'])) {
+                    $agent->setHost($options['host']);
+                }
+                if (isset($options['port'])) {
+                    $agent->setPort($options['port']);
+                }
                 break;
             case self::AGENT_MEMCACHED:
                 $agent = new Memcached();
-                if (isset($options['host'])) $agent->setHost($options['host']);
-                if (isset($options['port'])) $agent->setPort($options['port']);
+                if (isset($options['host'])) {
+                    $agent->setHost($options['host']);
+                }
+                if (isset($options['port'])) {
+                    $agent->setPort($options['port']);
+                }
                 break;
             default:
                 throw new CacheException("Unimplemented agent name '{$name}' given!");
