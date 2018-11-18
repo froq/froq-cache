@@ -56,8 +56,7 @@ abstract class Agent implements AgentInterface
      */
     public function __construct(string $name, int $ttl = self::TTL)
     {
-        $this->setName($name);
-        $this->setTtl($ttl);
+        $this->setName($name)->setTtl($ttl);
     }
 
     /**
