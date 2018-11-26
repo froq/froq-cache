@@ -39,8 +39,9 @@ final class Apcu extends Agent
 {
     /**
      * Constructor.
-     * @param string $host
-     * @param int    $port
+     * @param  string $host
+     * @param  int    $port
+     * @throws Froq\Cache\CacheException
      */
     public function __construct(int $ttl = self::TTL)
     {

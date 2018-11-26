@@ -45,9 +45,10 @@ final class Memcached extends Agent
 
     /**
      * Constructor.
-     * @param string $host
-     * @param int    $port
-     * @param int    $ttl
+     * @param  string $host
+     * @param  int    $port
+     * @param  int    $ttl
+     * @throws Froq\Cache\CacheException
      */
     public function __construct(string $host = '127.0.0.1', int $port = 11211, int $ttl = self::TTL)
     {
@@ -64,6 +65,7 @@ final class Memcached extends Agent
     /**
      * Init.
      * @return Froq\Cache\Agent\AgentInterface
+     * @throws Froq\Cache\CacheException
      */
     public function init(): AgentInterface
     {
