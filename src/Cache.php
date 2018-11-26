@@ -63,6 +63,7 @@ final class Cache
      * @param  string     $name
      * @param  array|null $options
      * @return Froq\Cache\Agent\AgentInterface
+     * @throws Froq\Cache\CacheException
      */
     public static function init(string $name, array $options = null): AgentInterface
     {
@@ -122,41 +123,45 @@ final class Cache
     }
 
     /**
-     * Init file.
+     * Init file agent.
      * @param  array $options
      * @return Froq\Cache\Agent\File
+     * @throws Froq\Cache\CacheException
      */
-    public static function initFile(array $options = null): File
+    public static function initFileAgent(array $options = null): File
     {
         return self::init(self::AGENT_FILE, $options);
     }
 
     /**
-     * Init apcu.
+     * Init apcu agent.
      * @param  array|null $options
      * @return Froq\Cache\Agent\Apcu
+     * @throws Froq\Cache\CacheException
      */
-    public static function initApcu(array $options = null): Apcu
+    public static function initApcuAgent(array $options = null): Apcu
     {
         return self::init(self::AGENT_APCU, $options);
     }
 
     /**
-     * Init redis.
+     * Init redis agent.
      * @param  array|null $options
      * @return Froq\Cache\Agent\Redis
+     * @throws Froq\Cache\CacheException
      */
-    public static function initRedis(array $options = null): Redis
+    public static function initRedisAgent(array $options = null): Redis
     {
         return self::init(self::AGENT_REDIS, $options);
     }
 
     /**
-     * Init memcached.
+     * Init memcached agent.
      * @param  array|null $options
      * @return Froq\Cache\Agent\Memcached
+     * @throws Froq\Cache\CacheException
      */
-    public static function initMemcached(array $options = null): Memcached
+    public static function initMemcachedAgent(array $options = null): Memcached
     {
         return self::init(self::AGENT_MEMCACHED, $options);
     }
