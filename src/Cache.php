@@ -59,13 +59,13 @@ final /* static */ class Cache
     {}
 
     /**
-     * Init.
+     * Init agent.
      * @param  string     $name
      * @param  array|null $options
      * @return Froq\Cache\Agent\AgentInterface
      * @throws Froq\Cache\CacheException
      */
-    public static function init(string $name, array $options = null): AgentInterface
+    public static function initAgent(string $name, array $options = null): AgentInterface
     {
         // default = true
         $once = (bool) ($options['once'] ?? true);
