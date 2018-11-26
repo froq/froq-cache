@@ -58,6 +58,7 @@ final class File extends Agent
     /**
      * Init.
      * @return Froq\Cache\Agent\AgentInterface
+     * @throws Froq\Cache\CacheException
      */
     public function init(): AgentInterface
     {
@@ -66,7 +67,7 @@ final class File extends Agent
         }
 
         if (!is_dir($this->directory)) {
-            $ok =@ mkdir($this->directory, 0644, true);
+            $ok = @mkdir($this->directory, 0644, true);
             if (!$ok) {
                 throw new CacheException(sprintf('Cannot make directory [%s]!',
                     strtolower(error_get_last()['message'] ?? '')));
@@ -85,8 +86,8 @@ final class File extends Agent
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
-        $file = $this->toFile($key);
-        $fileMTime =@ (int) filemtime($file);
+        $file = $this->getFilePath($key);
+        $fileMTime = (int) @filemtime($file);
         if ($fileMTime < time() - ($ttl ?? $this->ttl)) {
             return (bool) file_put_contents($file, $value, LOCK_EX);
         }
@@ -96,15 +97,16 @@ final class File extends Agent
 
     /**
      * Get.
-     * @param  string $key
-     * @param  any    $valueDefault
+     * @param  string   $key
+     * @param  any      $valueDefault
+     * @param  int|null $ttl
      * @return any
      */
     public function get(string $key, $valueDefault = null, int $ttl = null)
     {
         $value = $valueDefault;
-        $file = $this->toFile($key);
-        $fileMTime =@ (int) filemtime($file);
+        $file = $this->getFilePath($key);
+        $fileMTime = (int) @filemtime($file);
         if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
             $value = file_get_contents($file);
         } else {
@@ -121,25 +123,19 @@ final class File extends Agent
      */
     public function delete(string $key): bool
     {
-        $file = $this->toFile($key);
-        if (is_file($file)) {
-            unlink($file);
-            return true;
-        }
+        $file = $this->getFilePath($key);
 
-        return false;
+        return (bool) @unlink($file);
     }
 
     /**
      * Set directory.
      * @param  string $directory
-     * @return self
+     * @return void
      */
-    public function setDirectory(string $directory): self
+    public function setDirectory(string $directory): void
     {
         $this->directory = $directory;
-
-        return $this;
     }
 
     /**
@@ -152,11 +148,11 @@ final class File extends Agent
     }
 
     /**
-     * To file.
+     * Get file path.
      * @param  string $key
      * @return string
      */
-    private function toFile(string $key): string
+    private function getFilePath(string $key): string
     {
         return sprintf('%s/%s.cache', $this->directory, md5($key));
     }
