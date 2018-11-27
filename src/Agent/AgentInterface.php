@@ -35,10 +35,11 @@ namespace Froq\Cache\Agent;
 interface AgentInterface
 {
     /**
-     * Init.
-     * @return Froq\Cache\Agent\AgentInterface
+     * Has.
+     * @param  string $key
+     * @return bool
      */
-    public function init(): AgentInterface;
+    public function has(string $key): bool;
 
     /**
      * Set.
