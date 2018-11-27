@@ -99,7 +99,7 @@ final class File extends Agent
         $file = $this->getFilePath($key);
         $fileMTime = (int) @filemtime($file);
         if ($fileMTime < time() - ($ttl ?? $this->ttl)) {
-            return (bool) file_put_contents($file, (string) json_encode($value), LOCK_EX);
+            return (bool) file_put_contents($file, (string) serialize($value), LOCK_EX);
         }
 
         return true;
@@ -112,7 +112,7 @@ final class File extends Agent
     {
         $value = $valueDefault;
         if ($this->has($key, $ttl)) {
-            $value = json_decode((string) file_get_contents($this->getFilePath($key)));
+            $value = unserialize((string) file_get_contents($this->getFilePath($key)));
         }
 
         return $value;
