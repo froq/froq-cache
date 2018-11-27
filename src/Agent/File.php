@@ -81,16 +81,12 @@ final class File extends Agent
     public function has(string $key, int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
-        if (!file_exists($file)) {
-            return false;
-        }
-
-        $fileMTime = filemtime($file);
+        $fileMTime = (int) @filemtime($file);
         if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
             return true; // live
         }
 
-        unlink($file); // not live (do gc)
+        @unlink($file); // not live (do gc)
 
         return false;
     }
@@ -101,11 +97,7 @@ final class File extends Agent
     public function set(string $key, $value, int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
-        if (file_exists($file)) {
-            return true;
-        }
-
-        $fileMTime = filemtime($file);
+        $fileMTime = (int) @filemtime($file);
         if ($fileMTime < time() - ($ttl ?? $this->ttl)) {
             return (bool) file_put_contents($file, (string) json_encode($value), LOCK_EX);
         }
@@ -119,7 +111,7 @@ final class File extends Agent
     public function get(string $key, $valueDefault = null, int $ttl = null)
     {
         $value = $valueDefault;
-        if ($this->has($key, $this->ttl)) {
+        if ($this->has($key, $ttl)) {
             $value = json_decode((string) file_get_contents($this->getFilePath($key)));
         }
 
@@ -158,7 +150,7 @@ final class File extends Agent
      * @param  string $key
      * @return string
      */
-    private function getFilePath(string $key): string
+    public function getFilePath(string $key): string
     {
         return sprintf('%s/%s.cache', $this->directory, md5($key));
     }
