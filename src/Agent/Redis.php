@@ -63,9 +63,7 @@ final class Redis extends Agent
     }
 
     /**
-     * Init.
-     * @return Froq\Cache\Agent\AgentInterface
-     * @throws Froq\Cache\CacheException
+     * @inheritDoc Froq\Cache\Agent\Agent
      */
     public function init(): AgentInterface
     {
@@ -82,11 +80,15 @@ final class Redis extends Agent
     }
 
     /**
-     * Set.
-     * @param  string   $key
-     * @param  any      $value
-     * @param  int|null $ttl
-     * @return bool
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     */
+    public function has(string $key): bool
+    {
+        return $this->client->exists($key);
+    }
+
+    /**
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
@@ -94,10 +96,7 @@ final class Redis extends Agent
     }
 
     /**
-     * Get.
-     * @param  string $key
-     * @param  any    $valueDefault
-     * @return any
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function get(string $key, $valueDefault = null)
     {
@@ -110,9 +109,7 @@ final class Redis extends Agent
     }
 
     /**
-     * Delete.
-     * @param  string $key
-     * @return bool
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function delete(string $key): bool
     {

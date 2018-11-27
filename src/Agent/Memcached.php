@@ -63,9 +63,7 @@ final class Memcached extends Agent
     }
 
     /**
-     * Init.
-     * @return Froq\Cache\Agent\AgentInterface
-     * @throws Froq\Cache\CacheException
+     * @inheritDoc Froq\Cache\Agent\Agent
      */
     public function init(): AgentInterface
     {
@@ -82,11 +80,17 @@ final class Memcached extends Agent
     }
 
     /**
-     * Set.
-     * @param  string   $key
-     * @param  any      $value
-     * @param  int|null $ttl
-     * @return bool
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     */
+    public function has(string $key): bool
+    {
+        $this->client->get($key);
+
+        return ($this->client->getResultCode() === \Memcached::RES_SUCCESS);
+    }
+
+    /**
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
@@ -94,15 +98,12 @@ final class Memcached extends Agent
     }
 
     /**
-     * Get.
-     * @param  string $key
-     * @param  any    $valueDefault
-     * @return any
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function get(string $key, $valueDefault = null)
     {
         $value = $this->client->get($key);
-        if ($this->client->getResultCode() == \Memcached::RES_NOTFOUND) {
+        if ($this->client->getResultCode() === \Memcached::RES_NOTFOUND) {
             $value = $valueDefault;
         }
 
@@ -110,9 +111,7 @@ final class Memcached extends Agent
     }
 
     /**
-     * Delete.
-     * @param  string $key
-     * @return bool
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function delete(string $key): bool
     {
