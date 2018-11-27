@@ -81,6 +81,9 @@ final /* static */ class Cache
                 if (isset($options['directory'])) {
                     $agent->setDirectory($options['directory']);
                 }
+                if (isset($options['keySalt'])) {
+                    $agent->setKeySalt($options['keySalt']);
+                }
                 break;
             case self::AGENT_APCU:
                 $agent = new Apcu();

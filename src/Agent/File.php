@@ -44,6 +44,12 @@ final class File extends Agent
     private $directory;
 
     /**
+     * Key salt.
+     * @var string
+     */
+    private $keySalt = '';
+
+    /**
      * Constructor.
      * @param string $directory
      * @param int    $ttl
@@ -146,12 +152,31 @@ final class File extends Agent
     }
 
     /**
+     * Set key salt.
+     * @param  string $keySalt
+     * @return void
+     */
+    public function setKeySalt(string $keySalt): void
+    {
+        $this->keySalt = $keySalt;
+    }
+
+    /**
+     * Get key salt.
+     * @return string
+     */
+    public function getKeySalt(string $keySalt): string
+    {
+        return $this->keySalt;
+    }
+
+    /**
      * Get file path.
      * @param  string $key
      * @return string
      */
     public function getFilePath(string $key): string
     {
-        return sprintf('%s/%s.cache', $this->directory, md5($key));
+        return sprintf('%s/%s.cache', $this->directory, md5($this->keySalt . $key));
     }
 }
