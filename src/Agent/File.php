@@ -165,7 +165,7 @@ final class File extends Agent
      * Get key salt.
      * @return string
      */
-    public function getKeySalt(string $keySalt): string
+    public function getKeySalt(): string
     {
         return $this->keySalt;
     }
