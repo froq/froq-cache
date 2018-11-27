@@ -84,7 +84,7 @@ final class Redis extends Agent
      */
     public function has(string $key): bool
     {
-        return $this->client->exists($key);
+        return (bool) $this->client->exists($key);
     }
 
     /**
@@ -92,6 +92,10 @@ final class Redis extends Agent
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
+        // redis makes everything string, drops null's as "" etc.
+        // so this will retain original value type
+        $value = (string) serialize($value);
+
         return $this->client->set($key, $value, ($ttl ?? $this->ttl));
     }
 
@@ -102,7 +106,7 @@ final class Redis extends Agent
     {
         $value = $valueDefault;
         if ($this->client->exists($key)) {
-            $value = $this->client->get($key);
+            $value = unserialize($this->client->get($key));
         }
 
         return $value;
