@@ -130,7 +130,7 @@ final /* static */ class Cache
      */
     public static function initFileAgent(array $options = null): File
     {
-        return self::init(self::AGENT_FILE, $options);
+        return self::initAgent(self::AGENT_FILE, $options);
     }
 
     /**
@@ -141,7 +141,7 @@ final /* static */ class Cache
      */
     public static function initApcuAgent(array $options = null): Apcu
     {
-        return self::init(self::AGENT_APCU, $options);
+        return self::initAgent(self::AGENT_APCU, $options);
     }
 
     /**
@@ -152,7 +152,7 @@ final /* static */ class Cache
      */
     public static function initRedisAgent(array $options = null): Redis
     {
-        return self::init(self::AGENT_REDIS, $options);
+        return self::initAgent(self::AGENT_REDIS, $options);
     }
 
     /**
@@ -163,6 +163,6 @@ final /* static */ class Cache
      */
     public static function initMemcachedAgent(array $options = null): Memcached
     {
-        return self::init(self::AGENT_MEMCACHED, $options);
+        return self::initAgent(self::AGENT_MEMCACHED, $options);
     }
 }
