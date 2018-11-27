@@ -101,8 +101,8 @@ final class File extends Agent
     public function set(string $key, $value, int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
-        if (!file_exists($file)) {
-            return false;
+        if (file_exists($file)) {
+            return true;
         }
 
         $fileMTime = filemtime($file);
