@@ -56,9 +56,7 @@ final class File extends Agent
     }
 
     /**
-     * Init.
-     * @return Froq\Cache\Agent\AgentInterface
-     * @throws Froq\Cache\CacheException
+     * @inheritDoc Froq\Cache\Agent\Agent
      */
     public function init(): AgentInterface
     {
@@ -78,54 +76,62 @@ final class File extends Agent
     }
 
     /**
-     * Set.
-     * @param  string   $key
-     * @param  any      $value
-     * @param  int|null $ttl
-     * @return bool
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     */
+    public function has(string $key, int $ttl = null): bool
+    {
+        $file = $this->getFilePath($key);
+        if (!file_exists($file)) {
+            return false;
+        }
+
+        $fileMTime = filemtime($file);
+        if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
+            return true; // live
+        }
+
+        unlink($file); // not live (do gc)
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
-        $fileMTime = (int) @filemtime($file);
+        if (!file_exists($file)) {
+            return false;
+        }
+
+        $fileMTime = filemtime($file);
         if ($fileMTime < time() - ($ttl ?? $this->ttl)) {
-            return (bool) file_put_contents($file, $value, LOCK_EX);
+            return (bool) file_put_contents($file, (string) json_encode($value), LOCK_EX);
         }
 
         return true;
     }
 
     /**
-     * Get.
-     * @param  string   $key
-     * @param  any      $valueDefault
-     * @param  int|null $ttl
-     * @return any
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function get(string $key, $valueDefault = null, int $ttl = null)
     {
         $value = $valueDefault;
-        $file = $this->getFilePath($key);
-        $fileMTime = (int) @filemtime($file);
-        if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
-            $value = file_get_contents($file);
-        } else {
-            $this->delete($key); // gc
+        if ($this->has($key, $this->ttl)) {
+            $value = json_decode((string) file_get_contents($this->getFilePath($key)));
         }
 
         return $value;
     }
 
     /**
-     * Delete.
-     * @param  string $key
-     * @return bool
+     * @inheritDoc Froq\Cache\Agent\AgentInterface
      */
     public function delete(string $key): bool
     {
-        $file = $this->getFilePath($key);
-
-        return (bool) @unlink($file);
+        return @unlink($this->getFilePath($key));
     }
 
     /**
