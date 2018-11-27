@@ -105,7 +105,7 @@ final class Redis extends Agent
     public function get(string $key, $valueDefault = null)
     {
         $value = $valueDefault;
-        if ($this->client->exists($key)) {
+        if ($this->has($key)) {
             $value = unserialize($this->client->get($key));
         }
 
