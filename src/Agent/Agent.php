@@ -35,7 +35,7 @@ namespace Froq\Cache\Agent;
 abstract class Agent implements AgentInterface
 {
     /**
-     * Default TTL (1 hour).
+     * TTL (default=1 hour).
      * @const int
      */
     public const TTL = 3600;
@@ -103,4 +103,11 @@ abstract class Agent implements AgentInterface
     {
         return $this->ttl;
     }
+
+    /**
+     * Init.
+     * @return Froq\Cache\Agent\AgentInterface
+     * @throws Froq\Cache\CacheException
+     */
+    public abstract function init(): AgentInterface;
 }
