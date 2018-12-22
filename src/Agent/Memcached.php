@@ -86,7 +86,7 @@ final class Memcached extends Agent
     {
         $this->client->get($key);
 
-        return ($this->client->getResultCode() === \Memcached::RES_SUCCESS);
+        return $this->client->getResultCode() === \Memcached::RES_SUCCESS;
     }
 
     /**

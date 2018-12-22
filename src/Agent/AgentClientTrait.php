@@ -55,13 +55,11 @@ trait AgentClientTrait
     /**
      * Set client.
      * @param  object $client
-     * @return self
+     * @return void
      */
-    public final function setClient(object $client): self
+    public final function setClient(object $client): void
     {
         $this->client = $client;
-
-        return $this;
     }
 
     /**
@@ -76,13 +74,11 @@ trait AgentClientTrait
     /**
      * Set host.
      * @param  string $host
-     * @return self
+     * @return void
      */
-    public final function setHost(string $host): self
+    public final function setHost(string $host): void
     {
         $this->host = $host;
-
-        return $this;
     }
 
     /**
@@ -97,13 +93,11 @@ trait AgentClientTrait
     /**
      * Set port
      * @param  int $port
-     * @return self
+     * @return void
      */
-    public final function setPort(int $port): self
+    public final function setPort(int $port): void
     {
         $this->port = $port;
-
-        return $this;
     }
 
     /**

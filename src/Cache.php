@@ -129,7 +129,6 @@ final /* static */ class Cache
      * Init file agent.
      * @param  array $options
      * @return Froq\Cache\Agent\File
-     * @throws Froq\Cache\CacheException
      */
     public static function initFileAgent(array $options = null): File
     {
@@ -140,7 +139,6 @@ final /* static */ class Cache
      * Init apcu agent.
      * @param  array|null $options
      * @return Froq\Cache\Agent\Apcu
-     * @throws Froq\Cache\CacheException
      */
     public static function initApcuAgent(array $options = null): Apcu
     {
@@ -151,7 +149,6 @@ final /* static */ class Cache
      * Init redis agent.
      * @param  array|null $options
      * @return Froq\Cache\Agent\Redis
-     * @throws Froq\Cache\CacheException
      */
     public static function initRedisAgent(array $options = null): Redis
     {
@@ -162,7 +159,6 @@ final /* static */ class Cache
      * Init memcached agent.
      * @param  array|null $options
      * @return Froq\Cache\Agent\Memcached
-     * @throws Froq\Cache\CacheException
      */
     public static function initMemcachedAgent(array $options = null): Memcached
     {
