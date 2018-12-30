@@ -53,7 +53,7 @@ final class Memcached extends Agent
     public function __construct(string $host = '127.0.0.1', int $port = 11211, int $ttl = self::TTL)
     {
         if (!extension_loaded('memcached')) {
-            throw new CacheException('Memcached extension not found!');
+            throw new CacheException('Memcached extension not found');
         }
 
         $this->host = $host;
@@ -68,7 +68,7 @@ final class Memcached extends Agent
     public function init(): AgentInterface
     {
         if (empty($this->host) || empty($this->port)) {
-            throw new CacheException("'host' or 'port' cannot be empty!");
+            throw new CacheException("Memcached 'host' or 'port' cannot be empty");
         }
 
         $client = new \Memcached();

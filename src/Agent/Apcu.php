@@ -46,7 +46,7 @@ final class Apcu extends Agent
     public function __construct(int $ttl = self::TTL)
     {
         if (!extension_loaded('apcu')) {
-            throw new CacheException('APCu extension not found!');
+            throw new CacheException('APCu extension not found');
         }
 
         parent::__construct(Cache::AGENT_APCU, $ttl);

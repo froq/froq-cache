@@ -53,7 +53,7 @@ final class Redis extends Agent
     public function __construct(string $host = '127.0.0.1', int $port = 6379, int $ttl = self::TTL)
     {
         if (!extension_loaded('redis')) {
-            throw new CacheException('Redis extension not found!');
+            throw new CacheException('Redis extension not found');
         }
 
         $this->host = $host;
@@ -68,7 +68,7 @@ final class Redis extends Agent
     public function init(): AgentInterface
     {
         if (empty($this->host) || empty($this->port)) {
-            throw new CacheException("'host' or 'port' cannot be empty!");
+            throw new CacheException("Redis 'host' or 'port' cannot be empty");
         }
 
         $client = new \Redis();
