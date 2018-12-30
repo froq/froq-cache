@@ -67,14 +67,14 @@ final class File extends Agent
     public function init(): AgentInterface
     {
         if (empty($this->directory)) {
-            throw new CacheException('Cache directory cannot be empty!');
+            throw new CacheException('Cache directory cannot be empty.');
         }
 
         if (!is_dir($this->directory)) {
             $ok = @mkdir($this->directory, 0644, true);
             if (!$ok) {
-                throw new CacheException(sprintf('Cannot make directory [%s]!',
-                    strtolower(error_get_last()['message'] ?? '')));
+                throw new CacheException(sprintf('Cannot make directory, error[%s].',
+                    error_get_last()['message'] ?? 'Unknown'));
             }
         }
 
