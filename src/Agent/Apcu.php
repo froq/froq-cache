@@ -34,6 +34,7 @@ use Froq\Cache\CacheException;
  * @subpackage Froq\Cache
  * @object     Froq\Cache\Agent\Apcu
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 final class Apcu extends Agent
 {

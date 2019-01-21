@@ -31,6 +31,7 @@ namespace Froq\Cache;
  * @subpackage Froq\Cache
  * @object     Froq\Cache\CacheException
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 final class CacheException extends \Exception
 {}

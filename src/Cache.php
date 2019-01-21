@@ -34,6 +34,7 @@ use Froq\Cache\Agent\{File, Apcu, Redis, Memcached};
  * @subpackage Froq\Cache
  * @object     Froq\Cache\Cache
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 final /* static */ class Cache
 {

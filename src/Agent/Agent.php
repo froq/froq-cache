@@ -31,6 +31,7 @@ namespace Froq\Cache\Agent;
  * @subpackage Froq\Cache
  * @object     Froq\Cache\Agent\Agent
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 abstract class Agent implements AgentInterface
 {

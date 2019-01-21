@@ -34,6 +34,7 @@ use Froq\Cache\CacheException;
  * @subpackage Froq\Cache
  * @object     Froq\Cache\Agent\Redis
  * @author     Kerem Güneş <k-gun@mail.com>
+ * @since      1.0
  */
 final class Redis extends Agent
 {
