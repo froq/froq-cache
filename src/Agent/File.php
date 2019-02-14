@@ -24,17 +24,16 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache\Agent;
+namespace froq\cache\agent;
 
-use Froq\Cache\Cache;
-use Froq\Cache\CacheException;
+use froq\cache\{Cache, CacheException};
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\Agent\File
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * File.
+ * @package froq\cache\agent
+ * @object  froq\cache\agent\File
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final class File extends Agent
 {
@@ -63,7 +62,7 @@ final class File extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\Agent
+     * @inheritDoc froq\cache\agent\Agent
      */
     public function init(): AgentInterface
     {
@@ -83,7 +82,7 @@ final class File extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function has(string $key, int $ttl = null): bool
     {
@@ -99,7 +98,7 @@ final class File extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
@@ -113,7 +112,7 @@ final class File extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function get(string $key, $valueDefault = null, int $ttl = null)
     {
@@ -126,7 +125,7 @@ final class File extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function delete(string $key): bool
     {

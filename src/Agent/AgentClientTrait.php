@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache\Agent;
+namespace froq\cache\agent;
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\Agent\AgentClientTrait
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Agent Client Trait.
+ * @package froq\cache\agent
+ * @object  froq\cache\agent\AgentClientTrait
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 trait AgentClientTrait
 {

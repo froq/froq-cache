@@ -24,17 +24,16 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache\Agent;
+namespace froq\cache\agent;
 
-use Froq\Cache\Cache;
-use Froq\Cache\CacheException;
+use froq\cache\{Cache, CacheException};
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\Agent\Apcu
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Apcu.
+ * @package froq\cache\agent
+ * @object  froq\cache\agent\Apcu
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final class Apcu extends Agent
 {
@@ -42,7 +41,7 @@ final class Apcu extends Agent
      * Constructor.
      * @param  string $host
      * @param  int    $port
-     * @throws Froq\Cache\CacheException
+     * @throws froq\cache\CacheException
      */
     public function __construct(int $ttl = self::TTL)
     {
@@ -55,7 +54,7 @@ final class Apcu extends Agent
 
     /**
      * Init.
-     * @return Froq\Cache\Agent\Agent
+     * @return froq\cache\agent\Agent
      */
     public function init(): AgentInterface
     {
@@ -63,7 +62,7 @@ final class Apcu extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function has(string $key): bool
     {
@@ -71,7 +70,7 @@ final class Apcu extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
@@ -79,7 +78,7 @@ final class Apcu extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function get(string $key, $valueDefault = null)
     {
@@ -95,7 +94,7 @@ final class Apcu extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function delete(string $key): bool
     {

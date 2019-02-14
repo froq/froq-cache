@@ -24,23 +24,22 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache\Agent;
+namespace froq\cache\agent;
 
-use Froq\Cache\Cache;
-use Froq\Cache\CacheException;
+use froq\cache\{Cache, CacheException};
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\Agent\Memcached
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Memcached.
+ * @package froq\cache\agent
+ * @object  froq\cache\agent\Memcached
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final class Memcached extends Agent
 {
     /**
      * Agent client trait.
-     * @object Froq\Agent\Agent\AgentClientTrait
+     * @object froq\cache\agent\AgentClientTrait
      */
     use AgentClientTrait;
 
@@ -49,7 +48,7 @@ final class Memcached extends Agent
      * @param  string $host
      * @param  int    $port
      * @param  int    $ttl
-     * @throws Froq\Cache\CacheException
+     * @throws froq\cache\CacheException
      */
     public function __construct(string $host = '127.0.0.1', int $port = 11211, int $ttl = self::TTL)
     {
@@ -64,7 +63,7 @@ final class Memcached extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\Agent
+     * @inheritDoc froq\cache\agent\Agent
      */
     public function init(): AgentInterface
     {
@@ -81,7 +80,7 @@ final class Memcached extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function has(string $key): bool
     {
@@ -91,7 +90,7 @@ final class Memcached extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
@@ -99,7 +98,7 @@ final class Memcached extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function get(string $key, $valueDefault = null)
     {
@@ -112,7 +111,7 @@ final class Memcached extends Agent
     }
 
     /**
-     * @inheritDoc Froq\Cache\Agent\AgentInterface
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function delete(string $key): bool
     {

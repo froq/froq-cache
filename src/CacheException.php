@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache;
+namespace froq\cache;
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\CacheException
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Cache Exception.
+ * @package froq\cache
+ * @object  froq\cache\CacheException
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final class CacheException extends \Exception
 {}

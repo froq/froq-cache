@@ -24,17 +24,16 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache;
+namespace froq\cache;
 
-use Froq\Cache\Agent\AgentInterface;
-use Froq\Cache\Agent\{File, Apcu, Redis, Memcached};
+use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\Cache
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Cache.
+ * @package froq\cache
+ * @object  froq\cache\Cache
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 final /* static */ class Cache
 {
@@ -63,8 +62,8 @@ final /* static */ class Cache
      * Init agent.
      * @param  string     $name
      * @param  array|null $options
-     * @return Froq\Cache\Agent\AgentInterface
-     * @throws Froq\Cache\CacheException
+     * @return froq\cache\agent\AgentInterface
+     * @throws froq\cache\CacheException
      */
     public static function initAgent(string $name, array $options = null): AgentInterface
     {
@@ -129,7 +128,7 @@ final /* static */ class Cache
     /**
      * Init file agent.
      * @param  array $options
-     * @return Froq\Cache\Agent\File
+     * @return froq\cache\agent\File
      */
     public static function initFileAgent(array $options = null): File
     {
@@ -139,7 +138,7 @@ final /* static */ class Cache
     /**
      * Init apcu agent.
      * @param  array|null $options
-     * @return Froq\Cache\Agent\Apcu
+     * @return froq\cache\agent\Apcu
      */
     public static function initApcuAgent(array $options = null): Apcu
     {
@@ -149,7 +148,7 @@ final /* static */ class Cache
     /**
      * Init redis agent.
      * @param  array|null $options
-     * @return Froq\Cache\Agent\Redis
+     * @return froq\cache\agent\Redis
      */
     public static function initRedisAgent(array $options = null): Redis
     {
@@ -159,7 +158,7 @@ final /* static */ class Cache
     /**
      * Init memcached agent.
      * @param  array|null $options
-     * @return Froq\Cache\Agent\Memcached
+     * @return froq\cache\agent\Memcached
      */
     public static function initMemcachedAgent(array $options = null): Memcached
     {

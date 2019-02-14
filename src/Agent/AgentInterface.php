@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache\Agent;
+namespace froq\cache\agent;
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\Agent\AgentInterface
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Agent Interface.
+ * @package froq\cache\agent
+ * @object  froq\cache\agent\AgentInterface
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 interface AgentInterface
 {

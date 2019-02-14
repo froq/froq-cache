@@ -24,14 +24,14 @@
  */
 declare(strict_types=1);
 
-namespace Froq\Cache\Agent;
+namespace froq\cache\agent;
 
 /**
- * @package    Froq
- * @subpackage Froq\Cache
- * @object     Froq\Cache\Agent\Agent
- * @author     Kerem Güneş <k-gun@mail.com>
- * @since      1.0
+ * Agent.
+ * @package froq\cache\agent
+ * @object  froq\cache\agent\Agent
+ * @author  Kerem Güneş <k-gun@mail.com>
+ * @since   1.0
  */
 abstract class Agent implements AgentInterface
 {
@@ -104,8 +104,8 @@ abstract class Agent implements AgentInterface
 
     /**
      * Init.
-     * @return Froq\Cache\Agent\AgentInterface
-     * @throws Froq\Cache\CacheException
+     * @return froq\cache\agent\AgentInterface
+     * @throws froq\cache\CacheException
      */
     public abstract function init(): AgentInterface;
 }
