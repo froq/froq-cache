@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Agent Client Trait.
+ * Agent client trait.
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentClientTrait
  * @author  Kerem Güneş <k-gun@mail.com>

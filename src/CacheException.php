@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\cache;
 
 /**
- * Cache Exception.
+ * Cache exception.
  * @package froq\cache
  * @object  froq\cache\CacheException
  * @author  Kerem Güneş <k-gun@mail.com>

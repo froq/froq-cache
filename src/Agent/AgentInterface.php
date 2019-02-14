@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Agent Interface.
+ * Agent interface.
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentInterface
  * @author  Kerem Güneş <k-gun@mail.com>
