@@ -38,25 +38,22 @@ use froq\cache\{Cache, CacheException};
 final class File extends Agent
 {
     /**
-     * Directory.
-     * @var string
+     * Options.
+     * @var array
      */
-    private $directory;
-
-    /**
-     * Key salt.
-     * @var string
-     */
-    private $keySalt = '';
+    private $options = [
+        'directory' => null,
+        'serialize' => 'php' // php or json
+    ];
 
     /**
      * Constructor.
-     * @param string $directory
-     * @param int    $ttl
+     * @param array|null $options
+     * @param int        $ttl
      */
-    public function __construct(string $directory = null, int $ttl = self::TTL)
+    public function __construct(array $options = null, int $ttl = self::TTL)
     {
-        $this->directory = $directory;
+        $this->options = array_merge($this->options, ($options ?? []));
 
         parent::__construct(Cache::AGENT_FILE, $ttl);
     }
@@ -66,12 +63,12 @@ final class File extends Agent
      */
     public function init(): AgentInterface
     {
-        if (empty($this->directory)) {
+        if (empty($this->options['directory'])) {
             throw new CacheException('Cache directory cannot be empty');
         }
 
-        if (!is_dir($this->directory)) {
-            $ok =@ mkdir($this->directory, 0644, true);
+        if (!is_dir($this->options['directory'])) {
+            $ok =@ mkdir($this->options['directory'], 0644, true);
             if (!$ok) {
                 throw new CacheException(sprintf('Cannot make directory, error[%s]',
                     error_get_last()['message'] ?? 'Unknown'));
@@ -110,7 +107,7 @@ final class File extends Agent
             return true;
         }
 
-        return (bool) file_put_contents($this->getFilePath($key), (string) serialize($value), LOCK_EX);
+        return (bool) file_put_contents($this->getFilePath($key), $this->serialize($value), LOCK_EX);
     }
 
     /**
@@ -120,7 +117,7 @@ final class File extends Agent
     {
         $value = $valueDefault;
         if ($this->has($key, $ttl)) {
-            $value = unserialize((string) file_get_contents($this->getFilePath($key)));
+            $value = $this->unserialize((string) file_get_contents($this->getFilePath($key)));
         }
 
         return $value;
@@ -135,41 +132,12 @@ final class File extends Agent
     }
 
     /**
-     * Set directory.
-     * @param  string $directory
-     * @return void
+     * Get options.
+     * @return array
      */
-    public function setDirectory(string $directory): void
+    public function getOptions(): array
     {
-        $this->directory = $directory;
-    }
-
-    /**
-     * Get directory.
-     * @return ?string
-     */
-    public function getDirectory(): ?string
-    {
-        return $this->directory;
-    }
-
-    /**
-     * Set key salt.
-     * @param  string $keySalt
-     * @return void
-     */
-    public function setKeySalt(string $keySalt): void
-    {
-        $this->keySalt = $keySalt;
-    }
-
-    /**
-     * Get key salt.
-     * @return string
-     */
-    public function getKeySalt(): string
-    {
-        return $this->keySalt;
+        return $this->options;
     }
 
     /**
@@ -179,6 +147,44 @@ final class File extends Agent
      */
     public function getFilePath(string $key): string
     {
-        return sprintf('%s/%s.cache', $this->directory, md5($this->keySalt . $key));
+        return sprintf('%s/%s.cache', $this->options['directory'], md5($key));
+    }
+
+    /**
+     * Serialize.
+     * @param  any $value
+     * @return string
+     * @throws froq\cache\CacheException
+     */
+    private function serialize($value): string
+    {
+        $serializeOption = $this->options['serialize'];
+        if ($serializeOption == 'php') {
+            return (string) serialize($value);
+        }
+        if ($serializeOption == 'json') {
+            return (string) json_encode($value);
+        }
+
+        throw new CacheException("Unimplemented serialize option '{$serializeOption}' given");
+    }
+
+    /**
+     * Unserialize.
+     * @param  string $value
+     * @return any
+     * @throws froq\cache\CacheException
+     */
+    private function unserialize(string $value)
+    {
+        $serializeOption = $this->options['serialize'];
+        if ($serializeOption == 'php') {
+            return unserialize($value);
+        }
+        if ($serializeOption == 'json') {
+            return json_decode($value);
+        }
+
+        throw new CacheException("Unimplemented serialize option '{$serializeOption}' given");
     }
 }

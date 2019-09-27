@@ -78,13 +78,7 @@ final /* static */ class Cache
         $agent = null;
         switch (strtolower($name)) {
             case self::AGENT_FILE:
-                $agent = new File();
-                if (isset($options['directory'])) {
-                    $agent->setDirectory($options['directory']);
-                }
-                if (isset($options['keySalt'])) {
-                    $agent->setKeySalt($options['keySalt']);
-                }
+                $agent = new File($options);
                 break;
             case self::AGENT_APCU:
                 $agent = new Apcu();
