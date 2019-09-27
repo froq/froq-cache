@@ -43,7 +43,10 @@ final class File extends Agent
      */
     private $options = [
         'directory' => null,
-        'serialize' => 'php' // php or json
+        'serialize' => [
+            'type'  => 'php', // php or json
+            'flags' => 0      // for json decode only
+        ]
     ];
 
     /**
@@ -158,15 +161,15 @@ final class File extends Agent
      */
     private function serialize($value): string
     {
-        $serializeOption = $this->options['serialize'];
-        if ($serializeOption == 'php') {
+        $option = $this->options['serialize'];
+        if ($option['type'] == 'php') {
             return (string) serialize($value);
         }
-        if ($serializeOption == 'json') {
-            return (string) json_encode($value);
+        if ($option['type'] == 'json') {
+            return (string) json_encode($value, $option['flags'] ?? 0);
         }
 
-        throw new CacheException("Unimplemented serialize option '{$serializeOption}' given");
+        throw new CacheException("Unimplemented serialize option '{$option}' given");
     }
 
     /**
@@ -177,14 +180,14 @@ final class File extends Agent
      */
     private function unserialize(string $value)
     {
-        $serializeOption = $this->options['serialize'];
-        if ($serializeOption == 'php') {
+        $option = $this->options['serialize'];
+        if ($option['type'] == 'php') {
             return unserialize($value);
         }
-        if ($serializeOption == 'json') {
+        if ($option['type'] == 'json') {
             return json_decode($value);
         }
 
-        throw new CacheException("Unimplemented serialize option '{$serializeOption}' given");
+        throw new CacheException("Unimplemented serialize option '{$option}' given");
     }
 }
