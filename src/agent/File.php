@@ -71,7 +71,7 @@ final class File extends Agent
         }
 
         if (!is_dir($this->directory)) {
-            $ok = @mkdir($this->directory, 0644, true);
+            $ok =@ mkdir($this->directory, 0644, true);
             if (!$ok) {
                 throw new CacheException(sprintf('Cannot make directory, error[%s]',
                     error_get_last()['message'] ?? 'Unknown'));
@@ -87,7 +87,11 @@ final class File extends Agent
     public function has(string $key, int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
-        $fileMTime = (int) @filemtime($file);
+        $fileMTime =@ (int) filemtime($file);
+        if ($fileMTime == 0) {
+            return false;
+        }
+
         if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
             return true; // live
         }
@@ -102,13 +106,11 @@ final class File extends Agent
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
-        $file = $this->getFilePath($key);
-        $fileMTime = (int) @filemtime($file);
-        if ($fileMTime < time() - ($ttl ?? $this->ttl)) {
-            return (bool) file_put_contents($file, (string) serialize($value), LOCK_EX);
+        if ($this->has($key, $ttl)) {
+            return true;
         }
 
-        return true;
+        return (bool) file_put_contents($this->getFilePath($key), (string) serialize($value), LOCK_EX);
     }
 
     /**

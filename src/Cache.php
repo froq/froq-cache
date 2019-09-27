@@ -26,7 +26,8 @@ declare(strict_types=1);
 
 namespace froq\cache;
 
-use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
+use froq\cache\agent\AgentInterface;
+use froq\cache\agent\{File, Apcu, Redis, Memcached};
 
 /**
  * Cache.
@@ -59,13 +60,13 @@ final /* static */ class Cache
     {}
 
     /**
-     * Init agent.
+     * Init.
      * @param  string     $name
      * @param  array|null $options
      * @return froq\cache\agent\AgentInterface
      * @throws froq\cache\CacheException
      */
-    public static function initAgent(string $name, array $options = null): AgentInterface
+    public static function init(string $name, array $options = null): AgentInterface
     {
         // default = true
         $once = (bool) ($options['once'] ?? true);
@@ -123,45 +124,5 @@ final /* static */ class Cache
         }
 
         return $agent;
-    }
-
-    /**
-     * Init file agent.
-     * @param  array $options
-     * @return froq\cache\agent\File
-     */
-    public static function initFileAgent(array $options = null): File
-    {
-        return self::initAgent(self::AGENT_FILE, $options);
-    }
-
-    /**
-     * Init apcu agent.
-     * @param  array|null $options
-     * @return froq\cache\agent\Apcu
-     */
-    public static function initApcuAgent(array $options = null): Apcu
-    {
-        return self::initAgent(self::AGENT_APCU, $options);
-    }
-
-    /**
-     * Init redis agent.
-     * @param  array|null $options
-     * @return froq\cache\agent\Redis
-     */
-    public static function initRedisAgent(array $options = null): Redis
-    {
-        return self::initAgent(self::AGENT_REDIS, $options);
-    }
-
-    /**
-     * Init memcached agent.
-     * @param  array|null $options
-     * @return froq\cache\agent\Memcached
-     */
-    public static function initMemcachedAgent(array $options = null): Memcached
-    {
-        return self::initAgent(self::AGENT_MEMCACHED, $options);
     }
 }
