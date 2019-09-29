@@ -61,22 +61,22 @@ final /* static */ class Cache
 
     /**
      * Init.
-     * @param  string     $name
+     * @param  string     $type
      * @param  array|null $options
      * @return froq\cache\agent\AgentInterface
      * @throws froq\cache\CacheException
      */
-    public static function init(string $name, array $options = null): AgentInterface
+    public static function init(string $type, array $options = null): AgentInterface
     {
-        // default = true
+        // @default=true
         $once = (bool) ($options['once'] ?? true);
 
-        if ($once && isset(self::$instances[$name])) {
-            return self::$instances[$name];
+        if ($once && isset(self::$instances[$type])) {
+            return self::$instances[$type];
         }
 
         $agent = null;
-        switch (strtolower($name)) {
+        switch (strtolower($type)) {
             case self::AGENT_FILE:
                 $agent = new File($options);
                 break;
@@ -102,7 +102,7 @@ final /* static */ class Cache
                 }
                 break;
             default:
-                throw new CacheException("Unimplemented agent name '{$name}' given");
+                throw new CacheException("Unimplemented agent type '{$type}' given");
         }
 
         // set ttl if provided
@@ -114,7 +114,7 @@ final /* static */ class Cache
         $agent->init();
 
         if ($once) {
-            self::$instances[$name] = $agent;
+            self::$instances[$type] = $agent;
         }
 
         return $agent;
