@@ -150,7 +150,7 @@ final class File extends Agent
      */
     public function getFilePath(string $key): string
     {
-        return sprintf('%s/%s.cache', $this->options['directory'], md5($key));
+        return sprintf('%s/%s.cache', $this->options['directory'], $key);
     }
 
     /**
