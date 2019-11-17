@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 use froq\cache\agent\AgentInterface;
-use froq\interfaces\Nameable;
 
 /**
  * Abstract Agent.
@@ -36,7 +35,7 @@ use froq\interfaces\Nameable;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-abstract class AbstractAgent implements Nameable
+abstract class AbstractAgent
 {
     /**
      * Ttl.
@@ -68,7 +67,9 @@ abstract class AbstractAgent implements Nameable
     }
 
     /**
-     * @inheritDoc froq\interfaces\Nameable
+     * Set name.
+     * @param  string $name
+     * @return void
      */
     public final function setName(string $name): void
     {
@@ -76,7 +77,8 @@ abstract class AbstractAgent implements Nameable
     }
 
     /**
-     * @inheritDoc froq\interfaces\Nameable
+     * Get name.
+     * @return string
      */
     public final function getName(): string
     {
