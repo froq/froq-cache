@@ -26,12 +26,14 @@ declare(strict_types=1);
 
 namespace froq\cache;
 
+use froq\Exception;
+
 /**
- * Cache exception.
+ * Cache Exception.
  * @package froq\cache
  * @object  froq\cache\CacheException
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final class CacheException extends \Exception
+class CacheException extends Exception
 {}

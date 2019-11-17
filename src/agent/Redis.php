@@ -26,7 +26,8 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\{Cache, CacheException};
+use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
+use Redis as _Redis;
 
 /**
  * Redis.
@@ -35,7 +36,7 @@ use froq\cache\{Cache, CacheException};
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final class Redis extends Agent
+final class Redis extends AbstractAgent implements AgentInterface
 {
     /**
      * Agent client trait.
@@ -48,30 +49,30 @@ final class Redis extends Agent
      * @param  string $host
      * @param  int    $port
      * @param  int    $ttl
-     * @throws froq\cache\CacheException
+     * @throws froq\cache\agent\AgentException
      */
     public function __construct(string $host = '127.0.0.1', int $port = 6379, int $ttl = self::TTL)
     {
         if (!extension_loaded('redis')) {
-            throw new CacheException('Redis extension not found');
+            throw new AgentException('Redis extension not found');
         }
 
         $this->host = $host;
         $this->port = $port;
 
-        parent::__construct(Cache::AGENT_REDIS, $ttl);
+        parent::__construct(AgentInterface::NAME_REDIS, $ttl);
     }
 
     /**
-     * @inheritDoc froq\cache\agent\Agent
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function init(): AgentInterface
     {
-        if (empty($this->host) || empty($this->port)) {
-            throw new CacheException("Redis 'host' or 'port' cannot be empty");
+        if ($this->host == null || $this->port == null) {
+            throw new AgentException('Host or port cannot be empty');
         }
 
-        $client = new \Redis();
+        $client = new _Redis();
         $client->pconnect($this->host, $this->port);
 
         $this->setClient($client);
@@ -92,9 +93,9 @@ final class Redis extends Agent
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
-        // redis makes everything string, drops null's as "" etc.
-        // so this will retain original value type
-        $value = (string) serialize($value);
+        // Redis makes everything string, drops nulls as "" etc, so this will keep retaining
+        // original value type.
+        $value = serialize($value);
 
         return $this->client->set($key, $value, ($ttl ?? $this->ttl));
     }
@@ -118,5 +119,13 @@ final class Redis extends Agent
     public function delete(string $key): bool
     {
         return (bool) $this->client->delete($key);
+    }
+
+    /**
+     * @inheritDoc froq\cache\agent\AgentInterface
+     */
+    public function clear(): bool
+    {
+        return $this->client->flushAll();
     }
 }

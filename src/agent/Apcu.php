@@ -26,7 +26,7 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\{Cache, CacheException};
+use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
 
 /**
  * Apcu.
@@ -35,26 +35,24 @@ use froq\cache\{Cache, CacheException};
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final class Apcu extends Agent
+final class Apcu extends AbstractAgent implements AgentInterface
 {
     /**
      * Constructor.
-     * @param  string $host
-     * @param  int    $port
-     * @throws froq\cache\CacheException
+     * @param  int $ttl
+     * @throws froq\cache\agent\AgentException
      */
     public function __construct(int $ttl = self::TTL)
     {
         if (!extension_loaded('apcu')) {
-            throw new CacheException('APCu extension not found');
+            throw new AgentException('Apcu extension not found');
         }
 
-        parent::__construct(Cache::AGENT_APCU, $ttl);
+        parent::__construct(AgentInterface::NAME_APCU, $ttl);
     }
 
     /**
-     * Init.
-     * @return froq\cache\agent\Agent
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function init(): AgentInterface
     {
@@ -99,5 +97,13 @@ final class Apcu extends Agent
     public function delete(string $key): bool
     {
         return apcu_delete($key);
+    }
+
+    /**
+     * @inheritDoc froq\cache\agent\AgentInterface
+     */
+    public function clear(): bool
+    {
+        return apcu_clear_cache('user');
     }
 }

@@ -26,7 +26,8 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\{Cache, CacheException};
+use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
+use Error;
 
 /**
  * File.
@@ -35,7 +36,7 @@ use froq\cache\{Cache, CacheException};
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final class File extends Agent
+final class File extends AbstractAgent implements AgentInterface
 {
     /**
      * Options.
@@ -43,10 +44,7 @@ final class File extends Agent
      */
     private $options = [
         'directory' => null,
-        'serialize' => [
-            'type'  => 'php', // php or json
-            'flags' => 0      // for json decode only
-        ]
+        'serialize' => 'php' // Only 'php' or 'json'.
     ];
 
     /**
@@ -58,23 +56,22 @@ final class File extends Agent
     {
         $this->options = array_merge($this->options, ($options ?? []));
 
-        parent::__construct(Cache::AGENT_FILE, $ttl);
+        parent::__construct(AgentInterface::NAME_FILE, $ttl);
     }
 
     /**
-     * @inheritDoc froq\cache\agent\Agent
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function init(): AgentInterface
     {
         if (empty($this->options['directory'])) {
-            throw new CacheException('Cache directory cannot be empty');
+            throw new AgentException('Cache directory cannot be empty');
         }
 
         if (!is_dir($this->options['directory'])) {
             $ok =@ mkdir($this->options['directory'], 0644, true);
             if (!$ok) {
-                throw new CacheException(sprintf('Cannot make directory, error[%s]',
-                    error_get_last()['message'] ?? 'Unknown'));
+                throw new AgentException(sprintf('Cannot make directory, error[%s]', error()));
             }
         }
 
@@ -88,15 +85,15 @@ final class File extends Agent
     {
         $file = $this->getFilePath($key);
         $fileMTime =@ (int) filemtime($file);
+
         if ($fileMTime == 0) {
             return false;
         }
-
         if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
-            return true; // live
+            return true; // Live.
         }
 
-        @unlink($file); // not live (do gc)
+        @ unlink($file); // Not live (do gc).
 
         return false;
     }
@@ -110,7 +107,8 @@ final class File extends Agent
             return true;
         }
 
-        return (bool) file_put_contents($this->getFilePath($key), $this->serialize($value), LOCK_EX);
+        return (bool) file_put_contents(
+            $this->getFilePath($key), $this->serialize($value), LOCK_EX);
     }
 
     /**
@@ -119,8 +117,10 @@ final class File extends Agent
     public function get(string $key, $valueDefault = null, int $ttl = null)
     {
         $value = $valueDefault;
+
         if ($this->has($key, $ttl)) {
-            $value = $this->unserialize((string) file_get_contents($this->getFilePath($key)));
+            $value = $this->unserialize(
+                (string) file_get_contents($this->getFilePath($key)));
         }
 
         return $value;
@@ -131,7 +131,46 @@ final class File extends Agent
      */
     public function delete(string $key): bool
     {
-        return @unlink($this->getFilePath($key));
+        return @ unlink($this->getFilePath($key));
+    }
+
+    /**
+     * @inheritDoc froq\cache\agent\AgentInterface
+     */
+    public function clear(string $subDirectory = ''): bool
+    {
+        $directory = $this->options['directory'];
+        if ($subDirectory != '') {
+            $directory .= '/'. trim($subDirectory, '/');
+        }
+        $extension = '.cache';
+
+        try {
+            // Try fastest way, so far..
+            exec('find '.
+                escapeshellarg($directory) .' -name *'.
+                escapeshellarg($extension) .' -print0 | xargs -0 rm');
+        } catch (Error $e) {
+            // Oh my..
+            static $rmrf; if ($rmrf == null) {
+                $rmrf = function ($directory) use (&$rmrf, $extension) {
+                    $paths = glob($directory .'/*');
+                    foreach ((array) $paths as $path) {
+                        if (is_dir($path)) {
+                            $rmrf($path .'/*') && rmdir($path);
+                        } elseif (is_file($path) && strpos($path, $extension)) {
+                            unlink($path);
+                        }
+                    }
+                };
+            }
+
+            $rmrf($directory);
+        }
+
+        $paths = glob($directory .'/*');
+
+        return empty($paths);
     }
 
     /**
@@ -157,37 +196,40 @@ final class File extends Agent
      * Serialize.
      * @param  any $value
      * @return string
-     * @throws froq\cache\CacheException
+     * @throws froq\cache\agent\AgentException
      */
     private function serialize($value): string
     {
-        $option = $this->options['serialize'];
-        if ($option['type'] == 'php') {
+        $option = strtolower($this->options['serialize']);
+
+        if ($option == 'php') {
             return (string) serialize($value);
         }
-        if ($option['type'] == 'json') {
-            return (string) json_encode($value, $option['flags'] ?? 0);
+        if ($option == 'json') {
+            return (string) json_encode($value,
+                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
         }
 
-        throw new CacheException("Unimplemented serialize option '{$option}' given");
+        throw new AgentException("Unimplemented serialize option '{$option}' given");
     }
 
     /**
      * Unserialize.
      * @param  string $value
      * @return any
-     * @throws froq\cache\CacheException
+     * @throws froq\cache\agent\AgentException
      */
     private function unserialize(string $value)
     {
-        $option = $this->options['serialize'];
-        if ($option['type'] == 'php') {
+        $option = strtolower($this->options['serialize']);
+
+        if ($option == 'php') {
             return unserialize($value);
         }
-        if ($option['type'] == 'json') {
+        if ($option == 'json') {
             return json_decode($value);
         }
 
-        throw new CacheException("Unimplemented serialize option '{$option}' given");
+        throw new AgentException("Unimplemented serialize option '{$option}' given");
     }
 }
