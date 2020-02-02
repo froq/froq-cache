@@ -71,7 +71,7 @@ final class File extends AbstractAgent implements AgentInterface
         if (!is_dir($this->options['directory'])) {
             $ok =@ mkdir($this->options['directory'], 0644, true);
             if (!$ok) {
-                throw new AgentException(sprintf('Cannot make directory, error[%s]', error()));
+                throw new AgentException('Cannot make directory, error[%s]', ['@error']);
             }
         }
 
@@ -143,7 +143,8 @@ final class File extends AbstractAgent implements AgentInterface
         if ($subDirectory != '') {
             $directory .= '/'. trim($subDirectory, '/');
         }
-        $extension = '.cache';
+
+        static $extension = '.cache';
 
         try {
             // Try fastest way, so far..
@@ -154,8 +155,8 @@ final class File extends AbstractAgent implements AgentInterface
             // Oh my..
             static $rmrf; if ($rmrf == null) {
                 $rmrf = function ($directory) use (&$rmrf, $extension) {
-                    $paths = (array) glob($directory .'/*');
-                    foreach ($paths as $path) {
+                    $glob = glob($directory .'/*');
+                    foreach ($glob as $path) {
                         if (is_dir($path)) {
                             $rmrf($path .'/*'); rmdir($path);
                         } elseif (is_file($path) && strpos($path, $extension)) {
@@ -168,9 +169,9 @@ final class File extends AbstractAgent implements AgentInterface
             $rmrf($directory);
         }
 
-        $paths = glob($directory .'/*');
+        $glob = glob($directory .'/*');
 
-        return empty($paths);
+        return empty($glob);
     }
 
     /**
@@ -202,15 +203,15 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $option = strtolower($this->options['serialize']);
 
-        if ($option == 'php') {
-            return (string) serialize($value);
-        }
-        if ($option == 'json') {
-            return (string) json_encode($value,
-                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
+        switch ($option) {
+            case 'php':
+                return (string) serialize($value);
+            case 'json':
+                return (string) json_encode($value,
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
         }
 
-        throw new AgentException("Unimplemented serialize option '{$option}' given");
+        throw new AgentException('Unimplemented serialize option "%s" given', [$option]);
     }
 
     /**
@@ -223,13 +224,13 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $option = strtolower($this->options['serialize']);
 
-        if ($option == 'php') {
-            return unserialize($value);
-        }
-        if ($option == 'json') {
-            return json_decode($value);
+        switch ($option) {
+            case 'php':
+                return unserialize($value);
+            case 'json':
+                return json_decode($value);
         }
 
-        throw new AgentException("Unimplemented serialize option '{$option}' given");
+        throw new AgentException('Unimplemented serialize option "%s" given', [$option]);
     }
 }
