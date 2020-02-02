@@ -87,7 +87,7 @@ final class Cache
                 }
                 break;
             default:
-                throw new CacheException("Unimplemented agent name '{$name}' given");
+                throw new CacheException('Unimplemented agent name "%s" given', [$name]);
         }
 
         // Set ttl if provided.
