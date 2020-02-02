@@ -69,7 +69,7 @@ trait AgentClientTrait
      */
     public function getClient(): ?object
     {
-        return ($this->client ?? null);
+        return $this->client ?? null;
     }
 
     /**
@@ -88,7 +88,7 @@ trait AgentClientTrait
      */
     public function getHost(): ?string
     {
-        return ($this->host ?? null);
+        return $this->host ?? null;
     }
 
     /**
@@ -107,6 +107,6 @@ trait AgentClientTrait
      */
     public function getPort(): ?int
     {
-        return ($this->port ?? null);
+        return $this->port ?? null;
     }
 }
