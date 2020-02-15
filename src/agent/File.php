@@ -71,7 +71,7 @@ final class File extends AbstractAgent implements AgentInterface
         if (!is_dir($this->options['directory'])) {
             $ok =@ mkdir($this->options['directory'], 0644, true);
             if (!$ok) {
-                throw new AgentException('Cannot make directory, error[%s]', ['@error']);
+                throw new AgentException('Cannot make directory [error: %s]', ['@error']);
             }
         }
 
