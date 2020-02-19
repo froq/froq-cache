@@ -84,8 +84,11 @@ final class File extends AbstractAgent implements AgentInterface
     public function has(string $key, int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
-        $fileMTime =@ (int) filemtime($file);
+        if (!is_file($file) || !filesize($file)) {
+            return false;
+        }
 
+        $fileMTime = (int) filemtime($file);
         if ($fileMTime == 0) {
             return false;
         }
@@ -93,7 +96,7 @@ final class File extends AbstractAgent implements AgentInterface
             return true; // Live.
         }
 
-        @ unlink($file); // Not live (do gc).
+        unlink($file); // Not live (do gc).
 
         return false;
     }
