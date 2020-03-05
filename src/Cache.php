@@ -48,15 +48,14 @@ final class Cache
     /**
      * Init.
      * @param  string     $name
+     * @param  bool       $static
      * @param  array|null $options
      * @return froq\cache\agent\AgentInterface
      * @throws froq\cache\CacheException
      */
-    public static function init(string $name, array $options = null): AgentInterface
+    public static function init(string $name, bool $static = true, array $options = null): AgentInterface
     {
-        $once = (bool) ($options['once'] ?? true); // @default=true
-
-        if ($once && isset(self::$instances[$name])) {
+        if ($static && isset(self::$instances[$name])) {
             return self::$instances[$name];
         }
 
@@ -98,7 +97,7 @@ final class Cache
         // Connect etc.
         $agent->init();
 
-        if ($once) {
+        if ($static) {
             self::$instances[$name] = $agent;
         }
 
