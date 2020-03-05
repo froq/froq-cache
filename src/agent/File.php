@@ -43,9 +43,10 @@ final class File extends AbstractAgent implements AgentInterface
      * @var array
      */
     private $options = [
-        'directory' => null,
-        'serialize' => 'php', // Only 'php' or 'json'.
-        'compress'  => false
+        'directory'     => null,  // Must be given in constructor.
+        'serialize'     => 'php', // Only 'php' or 'json'.
+        'compress'      => false, // Compress serialized data.
+        'compressCheck' => false, // Verify compressed data.
     ];
 
     /**
@@ -89,6 +90,14 @@ final class File extends AbstractAgent implements AgentInterface
             return false;
         }
 
+        if ($this->options['compress'] && $this->options['compressCheck']) {
+            $magic = (string) file_get_contents($file, false, null, 0, 2);
+            // Check corruption (https://stackoverflow.com/a/9050274/362780).
+            if (stripos($magic, "\x78\x9c") !== 0) {
+                return false;
+            }
+        }
+
         $fileMTime = (int) filemtime($file);
         if ($fileMTime == 0) {
             return false;
@@ -115,6 +124,9 @@ final class File extends AbstractAgent implements AgentInterface
 
         if ($this->options['compress']) {
             $value = gzcompress($value);
+            if ($value === false) {
+                return false;
+            }
         }
 
         return (bool) file_put_contents($this->getFilePath($key), $value, LOCK_EX);
@@ -132,6 +144,9 @@ final class File extends AbstractAgent implements AgentInterface
 
             if ($this->options['compress']) {
                 $value = gzuncompress($value);
+                if ($value === false) {
+                    return null;
+                }
             }
 
             $value = $this->unserialize($value);
