@@ -44,7 +44,8 @@ final class File extends AbstractAgent implements AgentInterface
      */
     private $options = [
         'directory' => null,
-        'serialize' => 'php' // Only 'php' or 'json'.
+        'serialize' => 'php', // Only 'php' or 'json'.
+        'compress'  => false
     ];
 
     /**
@@ -110,8 +111,13 @@ final class File extends AbstractAgent implements AgentInterface
             return true;
         }
 
-        return (bool) file_put_contents(
-            $this->getFilePath($key), $this->serialize($value), LOCK_EX);
+        $value = $this->serialize($value);
+
+        if ($this->options['compress']) {
+            $value = gzcompress($value);
+        }
+
+        return (bool) file_put_contents($this->getFilePath($key), $value, LOCK_EX);
     }
 
     /**
@@ -122,8 +128,13 @@ final class File extends AbstractAgent implements AgentInterface
         $value = $valueDefault;
 
         if ($this->has($key, $ttl)) {
-            $value = $this->unserialize(
-                (string) file_get_contents($this->getFilePath($key)));
+            $value = (string) file_get_contents($this->getFilePath($key));
+
+            if ($this->options['compress']) {
+                $value = gzuncompress($value);
+            }
+
+            $value = $this->unserialize($value);
         }
 
         return $value;
