@@ -87,7 +87,7 @@ final class File extends AbstractAgent implements AgentInterface
     public function has(string $key, int $ttl = null): bool
     {
         $file = $this->prepareFile($key);
-        if (!filesize($file)) {
+        if (!is_file($file) || !filesize($file)) {
             return false;
         }
 
@@ -138,22 +138,20 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function get(string $key, $valueDefault = null, int $ttl = null)
     {
-        $value = $valueDefault;
-
-        if ($this->has($key, $ttl)) {
-            $value = (string) file_get_contents($this->prepareFile($key));
-
-            if ($this->options['compress']) {
-                $value = gzuncompress($value);
-                if ($value === false) {
-                    return null;
-                }
-            }
-
-            $value = $this->unserialize($value);
+        if (!$this->has($key, $ttl)) {
+            return $valueDefault;
         }
 
-        return $value;
+        $value = (string) file_get_contents($this->prepareFile($key));
+
+        if ($this->options['compress']) {
+            $value = gzuncompress($value);
+            if ($value === false) {
+                return null;
+            }
+        }
+
+        return $this->unserialize($value);
     }
 
     /**
@@ -244,8 +242,6 @@ final class File extends AbstractAgent implements AgentInterface
     private function prepareFile(string $key): string
     {
         $file = sprintf('%s/%s.cache', $this->options['directory'], $key);
-
-        @ is_file($file) || touch($file);
 
         // Also cache file..
         $this->options['file'] = $file;
