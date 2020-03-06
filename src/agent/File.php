@@ -44,6 +44,7 @@ final class File extends AbstractAgent implements AgentInterface
      */
     private $options = [
         'directory'     => null,  // Must be given in constructor.
+        'file'          => null,  // Set in runtime.
         'serialize'     => 'php', // Only 'php' or 'json'.
         'compress'      => false, // Compress serialized data.
         'compressCheck' => false, // Verify compressed data.
@@ -67,7 +68,7 @@ final class File extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         if (empty($this->options['directory'])) {
-            throw new AgentException('Cache directory cannot be empty');
+            throw new AgentException('Cache directory must not be empty');
         }
 
         if (!is_dir($this->options['directory'])) {
@@ -85,8 +86,8 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function has(string $key, int $ttl = null): bool
     {
-        $file = $this->getFilePath($key);
-        if (!is_file($file) || !filesize($file)) {
+        $file = $this->prepareFile($key);
+        if (!filesize($file)) {
             return false;
         }
 
@@ -129,7 +130,7 @@ final class File extends AbstractAgent implements AgentInterface
             }
         }
 
-        return (bool) file_put_contents($this->getFilePath($key), $value, LOCK_EX);
+        return (bool) file_put_contents($this->prepareFile($key), $value, LOCK_EX);
     }
 
     /**
@@ -140,7 +141,7 @@ final class File extends AbstractAgent implements AgentInterface
         $value = $valueDefault;
 
         if ($this->has($key, $ttl)) {
-            $value = (string) file_get_contents($this->getFilePath($key));
+            $value = (string) file_get_contents($this->prepareFile($key));
 
             if ($this->options['compress']) {
                 $value = gzuncompress($value);
@@ -160,7 +161,7 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function delete(string $key): bool
     {
-        return @ unlink($this->getFilePath($key));
+        return @ unlink($this->prepareFile($key));
     }
 
     /**
@@ -213,13 +214,43 @@ final class File extends AbstractAgent implements AgentInterface
     }
 
     /**
+     * Set directory.
+     * @return self
+     * @since  4.0
+     */
+    public function setDirectory(string $directory): self
+    {
+        $this->options['directory'] = $directory;
+
+        return $this;
+    }
+
+    /**
+     * Get directory.
+     * @return string
+     * @since  4.0
+     */
+    public function getDirectory(): string
+    {
+        return $this->options['directory'];
+    }
+
+    /**
      * Get file path.
      * @param  string $key
      * @return string
+     * @since  4.0 Renamed as getFilePath().
      */
-    public function getFilePath(string $key): string
+    private function prepareFile(string $key): string
     {
-        return sprintf('%s/%s.cache', $this->options['directory'], $key);
+        $file = sprintf('%s/%s.cache', $this->options['directory'], $key);
+
+        @ is_file($file) || touch($file);
+
+        // Also cache file..
+        $this->options['file'] = $file;
+
+        return $file;
     }
 
     /**
