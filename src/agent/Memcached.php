@@ -69,7 +69,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         if ($this->host == null || $this->port == null) {
-            throw new AgentException('Host or port cannot be empty');
+            throw new AgentException('Host or port must not be empty');
         }
 
         $client = new _Memcached();
