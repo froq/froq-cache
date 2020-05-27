@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Agent interface.
+ * Agent Interface.
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentInterface
  * @author  Kerem Güneş <k-gun@mail.com>
@@ -35,6 +35,22 @@ namespace froq\cache\agent;
  */
 interface AgentInterface
 {
+    /**
+     * Names.
+     * @const string
+     */
+    public const NAME_FILE      = 'file',
+                 NAME_APCU      = 'apcu',
+                 NAME_REDIS     = 'redis',
+                 NAME_MEMCACHED = 'memcached';
+
+    /**
+     * Init.
+     * @return froq\cache\agent\AgentInterface
+     * @throws froq\cache\agent\AgentException
+     */
+    public function init(): AgentInterface;
+
     /**
      * Has.
      * @param  string $key
@@ -44,12 +60,12 @@ interface AgentInterface
 
     /**
      * Set.
-     * @param  string $key
-     * @param  any    $value
-     * @param  int    $ttl
+     * @param  string   $key
+     * @param  any      $value
+     * @param  int|null $ttl
      * @return bool
      */
-    public function set(string $key, $value, int $ttl = Agent::TTL): bool;
+    public function set(string $key, $value, int $ttl = null): bool;
 
     /**
      * Get.
@@ -64,4 +80,11 @@ interface AgentInterface
      * @return bool
      */
     public function delete(string $key): bool;
+
+    /**
+     * Clear.
+     * @return bool
+     * @since  4.0
+     */
+    public function clear(): bool;
 }

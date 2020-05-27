@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Agent client trait.
+ * Agent Client Trait.
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentClientTrait
  * @author  Kerem Güneş <k-gun@mail.com>
@@ -39,37 +39,37 @@ trait AgentClientTrait
      * Client
      * @var object
      */
-    private $client;
+    private object $client;
 
     /**
      * Host.
      * @var string
      */
-    private $host;
+    private string $host;
 
     /**
      * Port.
      * @var int
      */
-    private $port;
+    private int $port;
 
     /**
      * Set client.
      * @param  object $client
      * @return void
      */
-    public final function setClient(object $client): void
+    public function setClient(object $client): void
     {
         $this->client = $client;
     }
 
     /**
      * Get client.
-     * @return object
+     * @return ?object
      */
-    public final function getClient(): object
+    public function getClient(): ?object
     {
-        return $this->client;
+        return $this->client ?? null;
     }
 
     /**
@@ -77,18 +77,18 @@ trait AgentClientTrait
      * @param  string $host
      * @return void
      */
-    public final function setHost(string $host): void
+    public function setHost(string $host): void
     {
         $this->host = $host;
     }
 
     /**
      * Get host.
-     * @return string
+     * @return ?string
      */
-    public final function getHost(): string
+    public function getHost(): ?string
     {
-        return $this->host;
+        return $this->host ?? null;
     }
 
     /**
@@ -96,17 +96,17 @@ trait AgentClientTrait
      * @param  int $port
      * @return void
      */
-    public final function setPort(int $port): void
+    public function setPort(int $port): void
     {
         $this->port = $port;
     }
 
     /**
      * Get port.
-     * @return int
+     * @return ?int
      */
-    public final function getPort(): int
+    public function getPort(): ?int
     {
-        return $this->port;
+        return $this->port ?? null;
     }
 }

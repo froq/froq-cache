@@ -26,32 +26,34 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
+use froq\cache\agent\AgentInterface;
+
 /**
- * Agent.
+ * Abstract Agent.
  * @package froq\cache\agent
- * @object  froq\cache\agent\Agent
+ * @object  froq\cache\agent\AbstractAgent
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-abstract class Agent implements AgentInterface
+abstract class AbstractAgent
 {
     /**
-     * TTL (default = 1 hour).
+     * Ttl.
      * @const int
      */
-    public const TTL = 3600;
+    public const TTL = 60; // 1 min.
 
     /**
      * Name.
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
-     * TTL.
+     * Ttl.
      * @var int
      */
-    protected $ttl;
+    protected int $ttl;
 
     /**
      * Constructor.
@@ -60,8 +62,8 @@ abstract class Agent implements AgentInterface
      */
     public function __construct(string $name, int $ttl = self::TTL)
     {
-        $this->setName($name);
-        $this->setTtl($ttl);
+        $this->name = $name;
+        $this->ttl = $ttl;
     }
 
     /**
@@ -84,7 +86,7 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Set TTL.
+     * Set ttl.
      * @param  int $ttl
      * @return void
      */
@@ -94,18 +96,11 @@ abstract class Agent implements AgentInterface
     }
 
     /**
-     * Get TTL.
+     * Get ttl.
      * @return int
      */
     public final function getTtl(): int
     {
         return $this->ttl;
     }
-
-    /**
-     * Init.
-     * @return froq\cache\agent\AgentInterface
-     * @throws froq\cache\CacheException
-     */
-    public abstract function init(): AgentInterface;
 }

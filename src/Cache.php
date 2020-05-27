@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace froq\cache;
 
-use froq\cache\agent\AgentInterface;
-use froq\cache\agent\{File, Apcu, Redis, Memcached};
+use froq\cache\CacheException;
+use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
 
 /**
  * Cache.
@@ -35,55 +35,39 @@ use froq\cache\agent\{File, Apcu, Redis, Memcached};
  * @object  froq\cache\Cache
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
+ * @static
  */
-final /* static */ class Cache
+final class Cache
 {
     /**
-     * Agent names.
-     * @const string
-     */
-    public const AGENT_FILE      = 'file',
-                 AGENT_APCU      = 'apcu',
-                 AGENT_REDIS     = 'redis',
-                 AGENT_MEMCACHED = 'memcached';
-
-    /**
      * Instances.
-     * @var array
+     * @var array<froq\cache\agent\AgentInterface>
      */
-    private static $instances = [];
-
-    /**
-     * Constructor.
-     */
-    private function __construct()
-    {}
+    private static array $instances = [];
 
     /**
      * Init.
-     * @param  string     $type
+     * @param  string     $name
+     * @param  bool       $static
      * @param  array|null $options
      * @return froq\cache\agent\AgentInterface
      * @throws froq\cache\CacheException
      */
-    public static function init(string $type, array $options = null): AgentInterface
+    public static function init(string $name, bool $static = true, array $options = null): AgentInterface
     {
-        // @default=true
-        $once = (bool) ($options['once'] ?? true);
-
-        if ($once && isset(self::$instances[$type])) {
-            return self::$instances[$type];
+        if ($static && isset(self::$instances[$name])) {
+            return self::$instances[$name];
         }
 
         $agent = null;
-        switch (strtolower($type)) {
-            case self::AGENT_FILE:
+        switch (strtolower($name)) {
+            case AgentInterface::NAME_FILE:
                 $agent = new File($options);
                 break;
-            case self::AGENT_APCU:
+            case AgentInterface::NAME_APCU:
                 $agent = new Apcu();
                 break;
-            case self::AGENT_REDIS:
+            case AgentInterface::NAME_REDIS:
                 $agent = new Redis();
                 if (isset($options['host'])) {
                     $agent->setHost($options['host']);
@@ -92,7 +76,7 @@ final /* static */ class Cache
                     $agent->setPort($options['port']);
                 }
                 break;
-            case self::AGENT_MEMCACHED:
+            case AgentInterface::NAME_MEMCACHED:
                 $agent = new Memcached();
                 if (isset($options['host'])) {
                     $agent->setHost($options['host']);
@@ -102,19 +86,19 @@ final /* static */ class Cache
                 }
                 break;
             default:
-                throw new CacheException("Unimplemented agent type '{$type}' given");
+                throw new CacheException('Unimplemented agent name "%s" given', [$name]);
         }
 
-        // set ttl if provided
+        // Set ttl if provided.
         if (isset($options['ttl'])) {
             $agent->setTtl($options['ttl']);
         }
 
-        // connect etc.
+        // Connect etc.
         $agent->init();
 
-        if ($once) {
-            self::$instances[$type] = $agent;
+        if ($static) {
+            self::$instances[$name] = $agent;
         }
 
         return $agent;

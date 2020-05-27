@@ -26,7 +26,8 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\{Cache, CacheException};
+use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
+use Memcached as _Memcached;
 
 /**
  * Memcached.
@@ -35,7 +36,7 @@ use froq\cache\{Cache, CacheException};
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   1.0
  */
-final class Memcached extends Agent
+final class Memcached extends AbstractAgent implements AgentInterface
 {
     /**
      * Agent client trait.
@@ -48,30 +49,30 @@ final class Memcached extends Agent
      * @param  string $host
      * @param  int    $port
      * @param  int    $ttl
-     * @throws froq\cache\CacheException
+     * @throws froq\cache\agent\AgentException
      */
     public function __construct(string $host = '127.0.0.1', int $port = 11211, int $ttl = self::TTL)
     {
         if (!extension_loaded('memcached')) {
-            throw new CacheException('Memcached extension not found');
+            throw new AgentException('Memcached extension not found');
         }
 
         $this->host = $host;
         $this->port = $port;
 
-        parent::__construct(Cache::AGENT_MEMCACHED, $ttl);
+        parent::__construct(AgentInterface::NAME_MEMCACHED, $ttl);
     }
 
     /**
-     * @inheritDoc froq\cache\agent\Agent
+     * @inheritDoc froq\cache\agent\AgentInterface
      */
     public function init(): AgentInterface
     {
-        if (empty($this->host) || empty($this->port)) {
-            throw new CacheException("Memcached 'host' or 'port' cannot be empty");
+        if ($this->host == null || $this->port == null) {
+            throw new AgentException('Host or port must not be empty');
         }
 
-        $client = new \Memcached();
+        $client = new _Memcached();
         $client->addServer($this->host, $this->port);
 
         $this->setClient($client);
@@ -86,7 +87,7 @@ final class Memcached extends Agent
     {
         $this->client->get($key);
 
-        return $this->client->getResultCode() === \Memcached::RES_SUCCESS;
+        return $this->client->getResultCode() === _Memcached::RES_SUCCESS;
     }
 
     /**
@@ -103,7 +104,7 @@ final class Memcached extends Agent
     public function get(string $key, $valueDefault = null)
     {
         $value = $this->client->get($key);
-        if ($this->client->getResultCode() === \Memcached::RES_NOTFOUND) {
+        if ($this->client->getResultCode() === _Memcached::RES_NOTFOUND) {
             $value = $valueDefault;
         }
 
@@ -116,5 +117,13 @@ final class Memcached extends Agent
     public function delete(string $key): bool
     {
         return $this->client->delete($key);
+    }
+
+    /**
+     * @inheritDoc froq\cache\agent\AgentInterface
+     */
+    public function clear(): bool
+    {
+        return $this->client->flush(0);
     }
 }

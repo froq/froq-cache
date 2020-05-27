@@ -24,16 +24,16 @@
  */
 declare(strict_types=1);
 
-namespace froq\cache;
+namespace froq\cache\agent;
 
-use froq\common\Exception;
+use froq\cache\CacheException;
 
 /**
- * Cache Exception.
- * @package froq\cache
- * @object  froq\cache\CacheException
+ * Agent Exception.
+ * @package froq\cache\agent
+ * @object  froq\cache\agent\AgentException
  * @author  Kerem Güneş <k-gun@mail.com>
- * @since   1.0
+ * @since   4.0
  */
-class CacheException extends Exception
+final class AgentException extends CacheException
 {}

@@ -1,14 +1,15 @@
 {
     "name": "froq/froq-cache",
     "homepage": "https://github.com/froq/froq-cache",
-    "description":  "Cache module for Froq!",
+    "description":  "Froq! Cache.",
     "keywords": ["froq", "cache"],
     "license": "MIT",
     "authors": [
         {"name": "Kerem Güneş", "email": "k-gun@mail.com"}
     ],
     "require": {
-        "php": "^7.2"
+        "php": "^7.4",
+        "froq/froq-common": "^4.0"
     },
     "autoload": {
         "classmap": ["src/"]
