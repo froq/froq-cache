@@ -93,8 +93,8 @@ final class Redis extends AbstractAgent implements AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
-        // Redis makes everything string, drops nulls as "" etc, so this will keep retaining
-        // original value type.
+        // Redis makes everything string, drops nulls as "" etc,
+        // so this will keep retaining original value type.
         $value = serialize($value);
 
         return $this->client->set($key, $value, ($ttl ?? $this->ttl));
