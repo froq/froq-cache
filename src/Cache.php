@@ -69,27 +69,19 @@ final class Cache
                 break;
             case AgentInterface::NAME_REDIS:
                 $agent = new Redis();
-                if (isset($options['host'])) {
-                    $agent->setHost($options['host']);
-                }
-                if (isset($options['port'])) {
-                    $agent->setPort($options['port']);
-                }
                 break;
             case AgentInterface::NAME_MEMCACHED:
                 $agent = new Memcached();
-                if (isset($options['host'])) {
-                    $agent->setHost($options['host']);
-                }
-                if (isset($options['port'])) {
-                    $agent->setPort($options['port']);
-                }
                 break;
             default:
                 throw new CacheException('Unimplemented agent name "%s" given', [$name]);
         }
 
-        // Set ttl if provided.
+        // Set possible options.
+        isset($options['host']) && $agent->setHost($options['host']);
+        isset($options['port']) && $agent->setPort($options['port']);
+
+        // Set default ttl if provided.
         if (isset($options['ttl'])) {
             $agent->setTtl($options['ttl']);
         }
