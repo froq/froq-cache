@@ -118,7 +118,7 @@ final class Redis extends AbstractAgent implements AgentInterface
      */
     public function delete(string $key): bool
     {
-        return (bool) $this->client->delete($key);
+        return (bool) $this->client->del($key);
     }
 
     /**
