@@ -60,7 +60,7 @@ final class Redis extends AbstractAgent implements AgentInterface
         $this->host = $host;
         $this->port = $port;
 
-        parent::__construct(AgentInterface::NAME_REDIS, $ttl);
+        parent::__construct(AgentInterface::REDIS, $ttl);
     }
 
     /**

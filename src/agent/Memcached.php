@@ -60,7 +60,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
         $this->host = $host;
         $this->port = $port;
 
-        parent::__construct(AgentInterface::NAME_MEMCACHED, $ttl);
+        parent::__construct(AgentInterface::MEMCACHED, $ttl);
     }
 
     /**

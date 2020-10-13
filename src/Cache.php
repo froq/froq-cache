@@ -26,73 +26,221 @@ declare(strict_types=1);
 
 namespace froq\cache;
 
-use froq\cache\CacheException;
-use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
+use froq\cache\{CacheFactory, CacheException};
+use froq\cache\agent\AgentInterface;
 
 /**
  * Cache.
  * @package froq\cache
  * @object  froq\cache\Cache
  * @author  Kerem Güneş <k-gun@mail.com>
- * @since   1.0
- * @static
+ * @since   4.1 Replaced/moved with/to CacheFactory.
  */
 final class Cache
 {
     /**
-     * Instances.
-     * @var array<froq\cache\agent\AgentInterface>
+     * Agent.
+     * @var froq\cache\agent\AgentInterface
      */
-    private static array $instances = [];
+    private AgentInterface $agent;
+
+    /**
+     * Constructor.
+     * @param string                               $name
+     * @param array|null                           $options
+     * @param froq\cache\agent\AgentInterface|null $agent @internal @see init()
+     */
+    public function __construct(string $name, array $options = null, AgentInterface $agent = null)
+    {
+        $this->agent = $agent ?? CacheFactory::init($name, $options);
+    }
 
     /**
      * Init.
      * @param  string     $name
-     * @param  bool       $static
      * @param  array|null $options
-     * @return froq\cache\agent\AgentInterface
-     * @throws froq\cache\CacheException
+     * @return froq\cache\Cache
      */
-    public static function init(string $name, bool $static = true, array $options = null): AgentInterface
+    public static function init(string $name, array $options = null): self
     {
-        if ($static && isset(self::$instances[$name])) {
-            return self::$instances[$name];
+        try { // To get existing agent in factory.
+            $agent = CacheFactory::getInstance($name);
+            return new self($name, null, $agent);
+        } catch (CacheException $e) {
+            return new self($name, $options);
+        }
+    }
+
+    /**
+     * Has.
+     * @param  string|int|array<string|int> $key
+     * @return bool
+     */
+    public function has($key): bool
+    {
+        $keys = $this->prepare($key, $single, __function__);
+
+        if ($single) {
+            return $this->agent->has($keys[0]);
         }
 
-        $agent = null;
-        switch (strtolower($name)) {
-            case AgentInterface::NAME_FILE:
-                $agent = new File($options);
+        $ret = !!$keys; // Ensure also empty keys.
+
+        foreach ($keys as [$key]) {
+            $ret = $this->agent->has($key);
+            if (!$ret) {
                 break;
-            case AgentInterface::NAME_APCU:
-                $agent = new Apcu();
-                break;
-            case AgentInterface::NAME_REDIS:
-                $agent = new Redis();
-                break;
-            case AgentInterface::NAME_MEMCACHED:
-                $agent = new Memcached();
-                break;
-            default:
-                throw new CacheException('Unimplemented agent name "%s" given', [$name]);
+            }
         }
 
-        // Set possible options.
-        isset($options['host']) && $agent->setHost($options['host']);
-        isset($options['port']) && $agent->setPort($options['port']);
+        return $ret;
+    }
 
-        // Set default ttl if provided.
-        if (isset($options['ttl'])) {
-            $agent->setTtl($options['ttl']);
+    /**
+     * Write.
+     * @param  string|int|array<string|int> $key
+     * @param  any|null                     $value
+     * @param  int|null                     $ttl
+     * @return bool
+     */
+    public function write($key, $value = null, int $ttl = null): bool
+    {
+        $keys = $this->prepare($key, $single, __function__, func_num_args());
+
+        if ($single) {
+            return $this->agent->set($keys[0], $value, $ttl);
         }
 
-        // Connect etc.
-        $agent->init();
+        $ret = false; // Ensure also empty keys.
 
-        if ($static) {
-            self::$instances[$name] = $agent;
+        // Must be an associative array ($value for check only).
+        foreach ($keys as [$key, $value]) {
+            $ret = $this->agent->set($key, $value, $ttl);
         }
 
-        return $agent;
+        return $ret;
+    }
+
+    /**
+     * Read.
+     * @param  string|int|array<string|int> $key
+     * @param  any|null                     $valueDefault
+     * @param  int|null                     $ttl For only "file" agent here.
+     * @return any|null
+     */
+    public function read($key, $valueDefault = null, int $ttl = null)
+    {
+        $keys = $this->prepare($key, $single, __function__);
+
+        if ($single) {
+            return $this->agent->get($keys[0], $valueDefault, $ttl);
+        }
+
+        $ret = null; // Don't apply value default for empty keys.
+
+        foreach ($keys as [$key]) {
+            $ret[] = $this->agent->get($key, $valueDefault, $ttl);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Remove.
+     * @param  string|int|array<string|int> $key
+     * @return bool
+     */
+    public function remove($key): bool
+    {
+        $keys = $this->prepare($key, $single, __function__);
+
+        if ($single) {
+            return $this->agent->delete($keys[0]);
+        }
+
+        $ret = false; // Ensure also empty keys.
+
+        foreach ($keys as [$key]) {
+            $ret = $this->agent->delete($key);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Flush.
+     * @return bool
+     */
+    public function flush(): bool
+    {
+        return $this->agent->clear();
+    }
+
+    /**
+     * Prepare.
+     * @param  string|int|array  $key
+     * @param  bool             &$single
+     * @param  string            $func
+     * @param  int|null          $argc
+     * @return array
+     * @throws froq\cache\CacheException
+     * @todo   Use "union" type for $key argument.
+     */
+    private function prepare($key, ?bool &$single, string $func, int $argc = null): array
+    {
+        $single = is_string($key) || is_int($key);
+        if ($single) {
+            // Second argument is required for write().
+            if (isset($argc) && $argc < 2) {
+                throw new CacheException('Invalid argument count "%s" for "%s::%s()", $value '.
+                    'is required when a single key given', [$argc, self::class, $func]);
+            }
+
+            $ret = [$this->prepareKey($key)];
+        } else {
+            if (!is_array($key)) {
+                throw new CacheException('Invalid $key type "%s" for "%s::%s()", valids are: '.
+                    'string, int, array<string|int>', [gettype($key), self::class, $func]);
+            }
+
+            $ret = [];
+
+            if ($func == 'write') {
+                // Generate entries for write() only.
+                foreach ($key as $key => $value) {
+                    if (is_string($key) || is_int($key)) {
+                        $ret[] = [$this->prepareKey($key), $value];
+                    }
+                }
+            } else {
+                // Check only key types for all others.
+                foreach ($key as $key) {
+                    if (is_string($key) || is_int($key)) {
+                        $ret[] = [$this->prepareKey($key)];
+                    }
+                }
+            }
+        }
+
+        // Prevent empty key errors.
+        $ret = array_filter($ret, fn($r) => strlen($r[0]));
+
+        if (!$ret) {
+            throw new CacheException('No valid keys/entries given for cache operations');
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Prepare key.
+     * @param  string|int $key
+     * @return string
+     * @todo   Use "union" type for $key argument.
+     */
+    private function prepareKey($key): string
+    {
+        return trim((string) $key);
     }
 }
+

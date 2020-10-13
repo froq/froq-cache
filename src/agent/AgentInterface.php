@@ -39,10 +39,10 @@ interface AgentInterface
      * Names.
      * @const string
      */
-    public const NAME_FILE      = 'file',
-                 NAME_APCU      = 'apcu',
-                 NAME_REDIS     = 'redis',
-                 NAME_MEMCACHED = 'memcached';
+    public const FILE      = 'file',
+                 APCU      = 'apcu',
+                 REDIS     = 'redis',
+                 MEMCACHED = 'memcached';
 
     /**
      * Init.

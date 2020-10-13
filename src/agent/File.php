@@ -59,7 +59,7 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $this->options = array_merge($this->options, ($options ?? []));
 
-        parent::__construct(AgentInterface::NAME_FILE, $ttl);
+        parent::__construct(AgentInterface::FILE, $ttl);
     }
 
     /**

@@ -48,7 +48,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
             throw new AgentException('Apcu extension not found');
         }
 
-        parent::__construct(AgentInterface::NAME_APCU, $ttl);
+        parent::__construct(AgentInterface::APCU, $ttl);
     }
 
     /**
