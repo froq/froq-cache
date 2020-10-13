@@ -45,22 +45,29 @@ final class Redis extends AbstractAgent implements AgentInterface
     use AgentClientTrait;
 
     /**
+     * Host & port.
+     * @const string, int
+     * @since 4.3
+     */
+    public const HOST = 'localhost',
+                 PORT = 6379;
+
+    /**
      * Constructor.
-     * @param  string $host
-     * @param  int    $port
-     * @param  int    $ttl
+     * @param  string     $id
+     * @param  array|null $options
      * @throws froq\cache\agent\AgentException
      */
-    public function __construct(string $host = '127.0.0.1', int $port = 6379, int $ttl = self::TTL)
+    public function __construct(string $id, array $options = null)
     {
         if (!extension_loaded('redis')) {
             throw new AgentException('Redis extension not found');
         }
 
-        $this->host = $host;
-        $this->port = $port;
+        $this->host = $options['host'] ?? self::HOST;
+        $this->port = $options['port'] ?? self::PORT;
 
-        parent::__construct(AgentInterface::REDIS, $ttl);
+        parent::__construct($id, AgentInterface::REDIS, $options);
     }
 
     /**
@@ -69,7 +76,7 @@ final class Redis extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         if ($this->host == null || $this->port == null) {
-            throw new AgentException('Host or port must not be empty');
+            throw new AgentException('Host or port can not be empty');
         }
 
         $client = new _Redis();

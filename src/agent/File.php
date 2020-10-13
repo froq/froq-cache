@@ -52,14 +52,18 @@ final class File extends AbstractAgent implements AgentInterface
 
     /**
      * Constructor.
+     * @param string     $id
      * @param array|null $options
-     * @param int        $ttl
      */
-    public function __construct(array $options = null, int $ttl = self::TTL)
+    public function __construct(string $id, array $options = null)
     {
-        $this->options = array_merge($this->options, ($options ?? []));
+        parent::__construct($id, AgentInterface::FILE, $options);
 
-        parent::__construct(AgentInterface::FILE, $ttl);
+        // Filter self options only.
+        $options = array_filter($options ?? [],
+            fn($k) => array_key_exists($k, $this->options), 2);
+
+        $options && $this->options = array_merge($this->options, $options);
     }
 
     /**

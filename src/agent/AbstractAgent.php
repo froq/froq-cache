@@ -44,10 +44,24 @@ abstract class AbstractAgent
     public const TTL = 60; // 1 min.
 
     /**
+     * Id.
+     * @var string
+     * @since 4.3
+     */
+    protected string $id;
+
+    /**
      * Name.
      * @var string
      */
     protected string $name;
+
+    /**
+     * Static.
+     * @var bool
+     * @since 4.3
+     */
+    protected bool $static;
 
     /**
      * Ttl.
@@ -57,32 +71,61 @@ abstract class AbstractAgent
 
     /**
      * Constructor.
-     * @param string $name
-     * @param int    $ttl
+     * @param string     $id
+     * @param string     $name
+     * @param array|null $options
      */
-    public function __construct(string $name, int $ttl = self::TTL)
+    public function __construct(string $id, string $name, array $options = null)
     {
-        $this->name = $name;
-        $this->ttl = $ttl;
+        $this->id     = $id;
+        $this->name   = $name;
+        $this->static = $options['static'] ?? false;
+        $this->ttl    = $options['ttl'] ?? self::TTL;
     }
 
     /**
-     * Set name.
-     * @param  string $name
-     * @return void
-     */
-    public final function setName(string $name): void
-    {
-        $this->name = strtolower($name);
-    }
-
-    /**
-     * Get name.
+     * Id.
      * @return string
+     * @since  4.3
      */
-    public final function getName(): string
+    public final function id(): string
+    {
+        return $this->id;
+    }
+
+    /**
+     * Name.
+     * @return string
+     * @since  4.3
+     */
+    public final function name(): string
     {
         return $this->name;
+    }
+
+    /**
+     * Static.
+     * @return string
+     * @since  4.3
+     */
+    public final function static(): bool
+    {
+        return $this->static;
+    }
+
+    /**
+     * Ttl.
+     * @param  int|null $ttl
+     * @return int
+     * @since  4.3
+     */
+    public final function ttl(int $ttl = null): int
+    {
+        if ($ttl !== null) {
+            $this->ttl = $ttl;
+        }
+
+        return $this->ttl;
     }
 
     /**

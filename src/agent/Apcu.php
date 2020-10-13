@@ -39,16 +39,17 @@ final class Apcu extends AbstractAgent implements AgentInterface
 {
     /**
      * Constructor.
-     * @param  int $ttl
+     * @param  string     $id
+     * @param  array|null $options
      * @throws froq\cache\agent\AgentException
      */
-    public function __construct(int $ttl = self::TTL)
+    public function __construct(string $id, array $options = null)
     {
         if (!extension_loaded('apcu')) {
-            throw new AgentException('Apcu extension not found');
+            throw new AgentException('APCu extension not found');
         }
 
-        parent::__construct(AgentInterface::APCU, $ttl);
+        parent::__construct($id, AgentInterface::APCU, $options);
     }
 
     /**
