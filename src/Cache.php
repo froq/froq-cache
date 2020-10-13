@@ -39,6 +39,13 @@ use froq\cache\agent\AgentInterface;
 final class Cache
 {
     /**
+     * Id.
+     * @var string
+     * @since 4.3
+     */
+    private string $id;
+
+    /**
      * Agent.
      * @var froq\cache\agent\AgentInterface
      */
@@ -46,38 +53,46 @@ final class Cache
 
     /**
      * Constructor.
-     * @param string                               $name
-     * @param array|null                           $options
-     * @param froq\cache\agent\AgentInterface|null $agent @internal @see init()
+     * @param string                               $id
+     * @param array                                $options
+     * @param froq\cache\agent\AgentInterface|null $agent @internal @see CacheFactory.init()
+     * @throws froq\cache\CacheException
      */
-    public function __construct(string $name, array $options = null, AgentInterface $agent = null)
+    public function __construct(string $id, array $options, AgentInterface $agent = null)
     {
-        $this->agent = $agent ?? CacheFactory::init($name, $options);
+        $this->id = $id;
+
+        if ($agent != null) {
+            $this->agent = $agent;
+        } else {
+            if (empty($options)) {
+                throw new CacheException('No agent options given');
+            } elseif (empty($options['id'])) {
+                throw new CacheException('No agent id given in options');
+            }
+
+            $this->agent = CacheFactory::initAgent($options['id'], $options);
+        }
+    }
+
+    /**
+     * Id.
+     * @return string
+     * @since  4.3
+     */
+    public function id(): string
+    {
+        return $this->id;
     }
 
     /**
      * Agent.
      * @return AgentInterface
+     * @since  4.2
      */
     public function agent(): AgentInterface
     {
         return $this->agent;
-    }
-
-    /**
-     * Init.
-     * @param  string     $name
-     * @param  array|null $options
-     * @return froq\cache\Cache
-     */
-    public static function init(string $name, array $options = null): self
-    {
-        try { // To get existing agent in factory.
-            $agent = CacheFactory::getInstance($name);
-            return new self($name, null, $agent);
-        } catch (CacheException $e) {
-            return new self($name, $options);
-        }
     }
 
     /**
