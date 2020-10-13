@@ -56,6 +56,15 @@ final class Cache
     }
 
     /**
+     * Agent.
+     * @return AgentInterface
+     */
+    public function agent(): AgentInterface
+    {
+        return $this->agent;
+    }
+
+    /**
      * Init.
      * @param  string     $name
      * @param  array|null $options
