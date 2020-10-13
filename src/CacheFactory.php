@@ -109,7 +109,10 @@ final class CacheFactory
     {
         $key = self::prepareKey('agent', $id);
 
-        $static = $options['static'] ??= (bool) ($options['static'] ?? true); // @default
+        [$static, $name] = [
+            (bool) ($options['static'] ?? true), // @default
+            (string) $options['name'],
+        ];
 
         // Return stored instance.
         if ($static && isset(self::$instances[$key])) {
