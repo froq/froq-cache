@@ -185,11 +185,13 @@ final class File extends AbstractAgent implements AgentInterface
                 escapeshellarg($extension) .' -print0 | xargs -0 rm');
         } catch (Error $e) {
             // Oh my..
-            static $rmrf; $rmrf ??= function ($directory) use (&$rmrf, $extension) {
+            static $rmrf;
+            $rmrf ??= function ($directory) use (&$rmrf, $extension) {
                 $glob = glob($directory .'/*');
                 foreach ($glob as $path) {
                     if (is_dir($path)) {
-                        $rmrf($path .'/*'); rmdir($path);
+                        $rmrf($path .'/*');
+                        rmdir($path);
                     } elseif (is_file($path) && strpos($path, $extension)) {
                         unlink($path);
                     }
