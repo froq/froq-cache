@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace froq\cache;
 
-use froq\cache\{CacheFactory, CacheException};
+use froq\cache\{CacheException, CacheFactory};
 use froq\cache\agent\AgentInterface;
 
 /**
