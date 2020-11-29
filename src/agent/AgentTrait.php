@@ -7,7 +7,8 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use Memcached, Redis;
+// @todo: Use for set/get client methods.
+// use Memcached, Redis;
 
 /**
  * Agent Trait.
