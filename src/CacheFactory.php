@@ -75,8 +75,8 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException('No cache initiated with "%s" name, '.
-            'call "%s::init()" to initiate first', [$id, self::class]);
+        throw new CacheException("No cache initiated with '%s' name, call '%s::init()' to initiate first",
+            [$id, self::class]);
     }
 
     /**
@@ -115,7 +115,7 @@ final class CacheFactory
                 $agent = new Memcached($id, $options);
                 break;
             default:
-                throw new CacheException('Unimplemented agent name "%s" given', [$name]);
+                throw new CacheException("Unimplemented agent name '%s' given", $name);
         }
 
         // Connect etc (@see AgentInterface.init()).
@@ -144,8 +144,8 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException('No cache agent initiated with "%s" id as static, '.
-            'call "%s::initAgent()" with static=true option to initiate first', [$id, self::class]);
+        throw new CacheException("No cache agent initiated with '%s' id as static, call '%s::initAgent()' "
+            . "with static=true option to initiate first", [$id, self::class]);
     }
 
     /**
@@ -157,6 +157,6 @@ final class CacheFactory
      */
     private static function prepareKey(string $base, string $id): string
     {
-        return $base .'@'. trim($id);
+        return $base . '@' . trim($id);
     }
 }

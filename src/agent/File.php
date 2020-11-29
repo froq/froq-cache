@@ -253,7 +253,7 @@ final class File extends AbstractAgent implements AgentInterface
                     JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
         }
 
-        throw new AgentException('Unimplemented serialize option "%s" given', [$option]);
+        throw new AgentException("Unimplemented serialize option '%s' given", $option);
     }
 
     /**
@@ -273,6 +273,6 @@ final class File extends AbstractAgent implements AgentInterface
                 return json_decode($value);
         }
 
-        throw new AgentException('Unimplemented serialize option "%s" given', [$option]);
+        throw new AgentException("Unimplemented serialize option '%s' given", $option);
     }
 }

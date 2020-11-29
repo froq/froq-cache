@@ -198,15 +198,15 @@ final class Cache
         if ($single) {
             // Second argument is required for write().
             if (isset($argc) && $argc < 2) {
-                throw new CacheException('Invalid argument count "%s" for "%s::%s()", $value '.
-                    'is required when a single key given', [$argc, self::class, $func]);
+                throw new CacheException("Invalid argument count '%s' for '%s::%s()', value "
+                    . "is required when a single key given", [$argc, self::class, $func]);
             }
 
             $ret = [$this->prepareKey($key)];
         } else {
             if (!is_array($key)) {
-                throw new CacheException('Invalid $key type "%s" for "%s::%s()", valids are: '.
-                    'string, int, array<string|int>', [gettype($key), self::class, $func]);
+                throw new CacheException("Invalid $key type '%s' for '%s::%s()', valids are: "
+                    . "string, int, array<string|int>", [gettype($key), self::class, $func]);
             }
 
             $ret = [];
