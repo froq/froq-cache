@@ -145,7 +145,7 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function delete(string $key): bool
     {
-        return @ unlink($this->prepareFile($key));
+        return unlink($this->prepareFile($key));
     }
 
     /**
