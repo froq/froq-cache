@@ -17,5 +17,5 @@ use froq\cache\CacheException;
  * @author  Kerem Güneş <k-gun@mail.com>
  * @since   4.0
  */
-final class AgentException extends CacheException
+class AgentException extends CacheException
 {}
