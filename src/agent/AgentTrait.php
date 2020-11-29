@@ -7,19 +7,23 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
+use Memcached, Redis;
+
 /**
- * Agent Client Trait.
+ * Agent Trait.
+ *
+ * Used by `Memcached` & `Redis` classes only to hold native client properties.
  *
  * @package froq\cache\agent
- * @object  froq\cache\agent\AgentClientTrait
+ * @object  froq\cache\agent\AgentTrait
  * @author  Kerem Güneş <k-gun@mail.com>
- * @since   1.0
+ * @since   1.0, 5.0 Renamed from AgentClientTrait.
  */
-trait AgentClientTrait
+trait AgentTrait
 {
     /**
-     * Client
-     * @var object
+     * Client.
+     * @var object<Memcached|Redis>
      */
     private object $client;
 
@@ -37,7 +41,8 @@ trait AgentClientTrait
 
     /**
      * Set client.
-     * @param  object $client
+     *
+     * @param  object<Memcached|Redis> $client
      * @return void
      */
     public function setClient(object $client): void
@@ -47,7 +52,8 @@ trait AgentClientTrait
 
     /**
      * Get client.
-     * @return ?object
+     *
+     * @return ?object<Memcached|Redis>
      */
     public function getClient(): ?object
     {
@@ -56,6 +62,7 @@ trait AgentClientTrait
 
     /**
      * Set host.
+     *
      * @param  string $host
      * @return void
      */
@@ -66,6 +73,7 @@ trait AgentClientTrait
 
     /**
      * Get host.
+     *
      * @return ?string
      */
     public function getHost(): ?string
@@ -74,7 +82,8 @@ trait AgentClientTrait
     }
 
     /**
-     * Set port
+     * Set port.
+     *
      * @param  int $port
      * @return void
      */
@@ -85,6 +94,7 @@ trait AgentClientTrait
 
     /**
      * Get port.
+     *
      * @return ?int
      */
     public function getPort(): ?int

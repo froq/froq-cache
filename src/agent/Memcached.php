@@ -21,10 +21,10 @@ use Memcached as _Memcached;
 final class Memcached extends AbstractAgent implements AgentInterface
 {
     /**
-     * Agent client trait.
-     * @object froq\cache\agent\AgentClientTrait
+     * Agent trait.
+     * @object froq\cache\agent\AgentTrait
      */
-    use AgentClientTrait;
+    use AgentTrait;
 
     /**
      * Host & port.
