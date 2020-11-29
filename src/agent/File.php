@@ -158,7 +158,7 @@ final class File extends AbstractAgent implements AgentInterface
             $directory .= '/'. trim($subDirectory, '/');
         }
 
-        $extension = '.cache';
+        static $extension = '.cache';
 
         try {
             // Try fastest way, so far..
