@@ -52,10 +52,10 @@ interface AgentInterface
     /**
      * Get.
      * @param  string $key
-     * @param  any    $valueDefault
+     * @param  any    $default
      * @return any
      */
-    public function get(string $key, $valueDefault = null);
+    public function get(string $key, $default = null);
 
     /**
      * Delete.

@@ -90,11 +90,11 @@ final class Memcached extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $valueDefault = null)
+    public function get(string $key, $default = null)
     {
         $value = $this->client->get($key);
         if ($this->client->getResultCode() === _Memcached::RES_NOTFOUND) {
-            $value = $valueDefault;
+            $value = $default;
         }
 
         return $value;

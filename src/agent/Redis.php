@@ -92,9 +92,9 @@ final class Redis extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $valueDefault = null)
+    public function get(string $key, $default = null)
     {
-        $value = $valueDefault;
+        $value = $default;
         if ($this->has($key)) {
             $value = unserialize($this->client->get($key));
         }

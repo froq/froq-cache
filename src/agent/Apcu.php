@@ -61,13 +61,13 @@ final class Apcu extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $valueDefault = null)
+    public function get(string $key, $default = null)
     {
-        $value = $valueDefault;
+        $value = $default;
         if (apcu_exists($key)) {
             $value = apcu_fetch($key, $ok);
             if (!$ok) {
-                $value = $valueDefault;
+                $value = $default;
             }
         }
 

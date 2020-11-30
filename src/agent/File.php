@@ -122,10 +122,10 @@ final class File extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $valueDefault = null, int $ttl = null)
+    public function get(string $key, $default = null, int $ttl = null)
     {
         if (!$this->has($key, $ttl)) {
-            return $valueDefault;
+            return $default;
         }
 
         $value = (string) file_get_contents($this->prepareFile($key));

@@ -130,22 +130,22 @@ final class Cache
     /**
      * Read.
      * @param  string|int|array<string|int> $key
-     * @param  any|null                     $valueDefault
+     * @param  any|null                     $default
      * @param  int|null                     $ttl For only "file" agent here.
      * @return any|null
      */
-    public function read($key, $valueDefault = null, int $ttl = null)
+    public function read($key, $default = null, int $ttl = null)
     {
         $keys = $this->prepare($key, $single, __function__);
 
         if ($single) {
-            return $this->agent->get($keys[0], $valueDefault, $ttl);
+            return $this->agent->get($keys[0], $default, $ttl);
         }
 
         $ret = null; // Don't apply value default for empty keys.
 
         foreach ($keys as [$key]) {
-            $ret[] = $this->agent->get($key, $valueDefault, $ttl);
+            $ret[] = $this->agent->get($key, $default, $ttl);
         }
 
         return $ret;
