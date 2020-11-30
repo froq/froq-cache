@@ -155,24 +155,24 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $directory = $this->options['directory'];
         if ($subDirectory != '') {
-            $directory .= '/'. trim($subDirectory, '/');
+            $directory .= '/' . trim($subDirectory, '/');
         }
 
         static $extension = '.cache';
 
         try {
             // Try fastest way, so far..
-            exec('find '.
-                escapeshellarg($directory) .' -name *'.
-                escapeshellarg($extension) .' -print0 | xargs -0 rm');
+            exec('find ' . escapeshellarg($directory)
+               . ' -name *' . escapeshellarg($extension)
+               . ' -print0 | xargs -0 rm');
         } catch (Error $e) {
             // Oh my..
             static $rmrf;
             $rmrf ??= function ($directory) use (&$rmrf, $extension) {
-                $glob = glob($directory .'/*');
+                $glob = glob($directory . '/*');
                 foreach ($glob as $path) {
                     if (is_dir($path)) {
-                        $rmrf($path .'/*');
+                        $rmrf($path . '/*');
                         rmdir($path);
                     } elseif (is_file($path) && strpos($path, $extension)) {
                         unlink($path);
@@ -183,7 +183,7 @@ final class File extends AbstractAgent implements AgentInterface
             $rmrf($directory);
         }
 
-        $glob = glob($directory .'/*');
+        $glob = glob($directory . '/*');
 
         return empty($glob);
     }
