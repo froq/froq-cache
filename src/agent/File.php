@@ -174,7 +174,7 @@ final class File extends AbstractAgent implements AgentInterface
                     if (is_dir($path)) {
                         $rmrf($path . '/*');
                         rmdir($path);
-                    } elseif (is_file($path) && strpos($path, $extension)) {
+                    } elseif (is_file($path) && str_ends_with($path, $extension)) {
                         unlink($path);
                     }
                 }
