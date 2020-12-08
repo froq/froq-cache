@@ -165,7 +165,7 @@ final class File extends AbstractAgent implements AgentInterface
             exec('find ' . escapeshellarg($directory)
                . ' -name *' . escapeshellarg($extension)
                . ' -print0 | xargs -0 rm');
-        } catch (Error $e) {
+        } catch (Error) {
             // Oh my..
             static $rmrf;
             $rmrf ??= function ($directory) use (&$rmrf, $extension) {
