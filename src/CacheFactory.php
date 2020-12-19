@@ -21,14 +21,12 @@ use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
  */
 final class CacheFactory
 {
-    /**
-     * Instances.
-     * @var array<string, froq\cache\Cache|froq\cache\agent\AgentInterface>
-     */
+    /** @var array<string, froq\cache\Cache|froq\cache\agent\AgentInterface> */
     private static array $instances = [];
 
     /**
-     * Instances.
+     * Get instance stack.
+     *
      * @return array
      * @since  4.3
      */
@@ -38,7 +36,8 @@ final class CacheFactory
     }
 
     /**
-     * Init.
+     * Initiate a cache object and store it with given id.
+     *
      * @param  string $id
      * @param  array  $options
      * @return froq\cache\Cache
@@ -51,7 +50,7 @@ final class CacheFactory
         if (!isset(self::$instances[$key])) {
             // Try to get existing agent in agent instances.
             try {
-                self::$instances[$key] = new Cache($id, [], self::getAgentInstance($options['id']));
+                self::$instances[$key] = new Cache($id, options: self::getAgentInstance($options['id']));
             } catch (CacheException) {
                 self::$instances[$key] = new Cache($id, $options);
             }
@@ -61,7 +60,8 @@ final class CacheFactory
     }
 
     /**
-     * Get instance.
+     * Get a cache instance or throw a `CacheException` if no cache instance found with given id.
+     *
      * @param  string $id
      * @return froq\cache\Cache
      * @throws froq\cache\CacheException
@@ -75,12 +75,13 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException("No cache initiated with '%s' name, call '%s::init()' to initiate first",
+        throw new CacheException('No cache initiated with name `%s`, call %s::init() to initiate first',
             [$id, self::class]);
     }
 
     /**
-     * Init agent.
+     * Initiate a static/dynamic agent instance with given id.
+     *
      * @param  string $id
      * @param  array  $options
      * @return froq\cache\agent\AgentInterface
@@ -101,22 +102,14 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        switch (strtolower($name)) {
-            case AgentInterface::FILE:
-                $agent = new File($id, $options);
-                break;
-            case AgentInterface::APCU:
-                $agent = new Apcu($id, $options);
-                break;
-            case AgentInterface::REDIS:
-                $agent = new Redis($id, $options);
-                break;
-            case AgentInterface::MEMCACHED:
-                $agent = new Memcached($id, $options);
-                break;
-            default:
-                throw new CacheException("Unimplemented agent name '%s' given", $name);
-        }
+        $agent = match ($name) {
+            AgentInterface::FILE      => new File($id, $options),
+            AgentInterface::APCU      => new Apcu($id, $options),
+            AgentInterface::REDIS     => new Redis($id, $options),
+            AgentInterface::MEMCACHED => new Memcached($id, $options),
+            default =>
+                throw new CacheException('Unimplemented agent name `%s`', $name)
+        };
 
         // Connect etc (@see AgentInterface.init()).
         $agent->init();
@@ -130,7 +123,8 @@ final class CacheFactory
     }
 
     /**
-     * Get agent instance.
+     * Get a static/dynamic agent instance or throw a `CacheException` if no agent instance found with given id.
+     *
      * @param  string $id
      * @return froq\cache\agent\AgentInterface
      * @throws froq\cache\CacheException
@@ -144,12 +138,13 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException("No cache agent initiated with '%s' id as static, call '%s::initAgent()' "
-            . "with static=true option to initiate first", [$id, self::class]);
+        throw new CacheException('No cache agent initiated with id `%s` as static, call %s::initAgent()'
+            . ' with static=true option to initiate first', [$id, self::class]);
     }
 
     /**
-     * Key.
+     * Prepare a key with given id.
+     *
      * @param  string $base
      * @param  string $id
      * @return string

@@ -54,14 +54,11 @@ final class File extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         if (empty($this->options['directory'])) {
-            throw new AgentException('Cache directory must not be empty');
+            throw new AgentException('Cache directory option must not be empty');
         }
 
-        if (!is_dir($this->options['directory'])) {
-            $ok = mkdir($this->options['directory'], 0755, true);
-            if (!$ok) {
-                throw new AgentException('Cannot make directory [error: %s]', '@error');
-            }
+        if (!is_dir($this->options['directory']) && !mkdir($this->options['directory'], 0755, true)) {
+            throw new AgentException('Cannot make directory [error: %s]', '@error');
         }
 
         return $this;
@@ -243,17 +240,14 @@ final class File extends AbstractAgent implements AgentInterface
      */
     private function serialize($value): string
     {
-        $option = strtolower($this->options['serialize']);
-
-        switch ($option) {
-            case 'php':
-                return (string) serialize($value);
-            case 'json':
-                return (string) json_encode($value,
-                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
-        }
-
-        throw new AgentException("Unimplemented serialize option '%s' given", $option);
+        return match (strtolower($this->options['serialize'])) {
+            'php'   => (string) serialize($value),
+            'json'  => (string) json_encode($value, JSON_UNESCAPED_UNICODE |
+                                                    JSON_UNESCAPED_SLASHES |
+                                                    JSON_PRESERVE_ZERO_FRACTION),
+            default =>
+                throw new AgentException('Unimplemented serialize option `%s`', $this->options['serialize'])
+        };
     }
 
     /**
@@ -266,13 +260,11 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $option = strtolower($this->options['serialize']);
 
-        switch ($option) {
-            case 'php':
-                return unserialize($value);
-            case 'json':
-                return json_decode($value);
-        }
-
-        throw new AgentException("Unimplemented serialize option '%s' given", $option);
+        return match ($option) {
+            'php'   => unserialize($value),
+            'json'  => json_decode($value),
+            default =>
+                throw new AgentException('Unimplemented serialize option `%s`', $this->options['serialize'])
+        };
     }
 }

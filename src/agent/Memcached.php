@@ -42,9 +42,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
      */
     public function __construct(string $id, array $options = null)
     {
-        if (!extension_loaded('memcached')) {
-            throw new AgentException('Memcached extension not found');
-        }
+        extension_loaded('memcached') || throw new AgentException('Memcached extension not found');
 
         $this->host = $options['host'] ?? self::HOST;
         $this->port = $options['port'] ?? self::PORT;
@@ -57,9 +55,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
      */
     public function init(): AgentInterface
     {
-        if ($this->host == null || $this->port == null) {
-            throw new AgentException('Host or port can not be empty');
-        }
+        ($this->host && $this->port) || throw new AgentException('Host or port can not be empty');
 
         $client = new _Memcached();
         $client->addServer($this->host, $this->port);

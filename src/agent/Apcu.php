@@ -27,9 +27,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
      */
     public function __construct(string $id, array $options = null)
     {
-        if (!extension_loaded('apcu')) {
-            throw new AgentException('APCu extension not found');
-        }
+        extension_loaded('apcu') || throw new AgentException('APCu extension not found');
 
         parent::__construct($id, AgentInterface::APCU, $options);
     }
