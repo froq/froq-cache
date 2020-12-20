@@ -7,13 +7,12 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-// @todo: Use for set/get client methods.
-// use Memcached, Redis;
+use Memcached, Redis;
 
 /**
  * Agent Trait.
  *
- * Used by `Memcached` & `Redis` classes only to hold native client properties.
+ * Used by Memcached & Redis classes only to hold native client properties.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentTrait
@@ -22,31 +21,22 @@ namespace froq\cache\agent;
  */
 trait AgentTrait
 {
-    /**
-     * Client.
-     * @var object<Memcached|Redis>
-     */
-    private object $client;
+    /** @var Memcached|Redis */
+    private Memcached|Redis $client;
 
-    /**
-     * Host.
-     * @var string
-     */
+    /** @var string */
     private string $host;
 
-    /**
-     * Port.
-     * @var int
-     */
+    /** @var int */
     private int $port;
 
     /**
      * Set client.
      *
-     * @param  object<Memcached|Redis> $client
+     * @param  Memcached|Redis $client
      * @return void
      */
-    public function setClient(object $client): void
+    public function setClient(Memcached|Redis $client): void
     {
         $this->client = $client;
     }
@@ -54,9 +44,9 @@ trait AgentTrait
     /**
      * Get client.
      *
-     * @return ?object<Memcached|Redis>
+     * @return Memcached|Redis
      */
-    public function getClient(): ?object
+    public function getClient(): Memcached|Redis|null
     {
         return $this->client ?? null;
     }
@@ -75,9 +65,9 @@ trait AgentTrait
     /**
      * Get host.
      *
-     * @return ?string
+     * @return string|null
      */
-    public function getHost(): ?string
+    public function getHost(): string|null
     {
         return $this->host ?? null;
     }
@@ -96,9 +86,9 @@ trait AgentTrait
     /**
      * Get port.
      *
-     * @return ?int
+     * @return int|null
      */
-    public function getPort(): ?int
+    public function getPort(): int|null
     {
         return $this->port ?? null;
     }
