@@ -20,14 +20,11 @@ use Redis as _Redis;
  */
 final class Redis extends AbstractAgent implements AgentInterface
 {
-    /**
-     * Agent trait.
-     * @object froq\cache\agent\AgentTrait
-     */
+    /** @see froq\cache\agent\AgentTrait */
     use AgentTrait;
 
     /**
-     * Host & port.
+     * Default host & port.
      * @const string, int
      * @since 4.3
      */
@@ -36,6 +33,7 @@ final class Redis extends AbstractAgent implements AgentInterface
 
     /**
      * Constructor.
+     *
      * @param  string     $id
      * @param  array|null $options
      * @throws froq\cache\agent\AgentException
@@ -82,7 +80,7 @@ final class Redis extends AbstractAgent implements AgentInterface
         // so this will keep retaining original value type.
         $value = serialize($value);
 
-        return $this->client->set($key, $value, ($ttl ?? $this->ttl));
+        return $this->client->set($key, $value, $ttl ?? $this->ttl);
     }
 
     /**
@@ -91,6 +89,7 @@ final class Redis extends AbstractAgent implements AgentInterface
     public function get(string $key, $default = null)
     {
         $value = $default;
+
         if ($this->has($key)) {
             $value = unserialize($this->client->get($key));
         }

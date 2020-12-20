@@ -19,40 +19,24 @@ use froq\cache\agent\AgentInterface;
  */
 abstract class AbstractAgent
 {
-    /**
-     * Ttl.
-     * @const int
-     */
+    /** @const int */
     public const TTL = 60; // 1 min.
 
-    /**
-     * Id.
-     * @var string
-     * @since 4.3
-     */
+    /** @var string @since 4.3 */
     protected string $id;
 
-    /**
-     * Name.
-     * @var string
-     */
+    /** @var string */
     protected string $name;
 
-    /**
-     * Static.
-     * @var bool
-     * @since 4.3
-     */
+    /** @var bool @since 4.3 */
     protected bool $static;
 
-    /**
-     * Ttl.
-     * @var int
-     */
+    /** @var int */
     protected int $ttl;
 
     /**
      * Constructor.
+     *
      * @param string     $id
      * @param string     $name
      * @param array|null $options
@@ -61,12 +45,13 @@ abstract class AbstractAgent
     {
         $this->id     = $id;
         $this->name   = $name;
-        $this->static = $options['static'] ?? false;
-        $this->ttl    = $options['ttl'] ?? self::TTL;
+        $this->static = $options['static'] ?? false;     // @default
+        $this->ttl    = $options['ttl']    ?? self::TTL; // @default
     }
 
     /**
-     * Id.
+     * Get id property.
+     *
      * @return string
      * @since  4.3
      */
@@ -76,7 +61,8 @@ abstract class AbstractAgent
     }
 
     /**
-     * Name.
+     * Get name property.
+     *
      * @return string
      * @since  4.3
      */
@@ -86,7 +72,8 @@ abstract class AbstractAgent
     }
 
     /**
-     * Static.
+     * Get static property.
+     *
      * @return string
      * @since  4.3
      */
@@ -96,7 +83,8 @@ abstract class AbstractAgent
     }
 
     /**
-     * Ttl.
+     * Get/set ttl property.
+     *
      * @param  int|null $ttl
      * @return int
      * @since  4.3
@@ -112,6 +100,7 @@ abstract class AbstractAgent
 
     /**
      * Set ttl.
+     *
      * @param  int $ttl
      * @return void
      */
@@ -122,6 +111,7 @@ abstract class AbstractAgent
 
     /**
      * Get ttl.
+     *
      * @return int
      */
     public final function getTtl(): int

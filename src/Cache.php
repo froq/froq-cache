@@ -13,7 +13,8 @@ use froq\cache\agent\AgentInterface;
 /**
  * Cache.
  *
- * Represents a simple class entity which is able to read/write operations, and also to do removals and validations.
+ * Represents a simple class entity which is able to read/write operations, and also to do removals
+ * and validations.
  *
  * @package froq\cache
  * @object  froq\cache\Cache
@@ -54,7 +55,7 @@ final class Cache
     }
 
     /**
-     * Id getter.
+     * Get id property.
      *
      * @return string
      * @since  4.3
@@ -65,7 +66,7 @@ final class Cache
     }
 
     /**
-     * Agent getter.
+     * Get agent property.
      *
      * @return froq\cache\agent\AgentInterface
      * @since  4.2

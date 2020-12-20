@@ -27,21 +27,24 @@ interface AgentInterface
                  MEMCACHED = 'memcached';
 
     /**
-     * Init.
+     * Initialize a cache agent.
+     *
      * @return froq\cache\agent\AgentInterface
      * @throws froq\cache\agent\AgentException
      */
     public function init(): AgentInterface;
 
     /**
-     * Has.
+     * Check whether any item was cached with given key.
+     *
      * @param  string $key
      * @return bool
      */
     public function has(string $key): bool;
 
     /**
-     * Set.
+     * Put an item to cache with given key/value and optionally given TTL.
+     *
      * @param  string   $key
      * @param  any      $value
      * @param  int|null $ttl
@@ -50,21 +53,24 @@ interface AgentInterface
     public function set(string $key, $value, int $ttl = null): bool;
 
     /**
-     * Get.
-     * @param  string $key
-     * @param  any    $default
-     * @return any
+     * Fetch an item from cache with given key or return default param when not exists.
+     *
+     * @param  string   $key
+     * @param  any|null $default
+     * @return any|null
      */
     public function get(string $key, $default = null);
 
     /**
-     * Delete.
+     * Drop an item from cache with given key.
+     *
      * @return bool
      */
     public function delete(string $key): bool;
 
     /**
-     * Clear.
+     * Drop all items from cache.
+     *
      * @return bool
      * @since  4.0
      */

@@ -13,6 +13,8 @@ use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
 /**
  * Cache Factory.
  *
+ * Represents a factory entity which responsible with creating/storing cache or cache agent objects.
+ *
  * @package froq\cache
  * @object  froq\cache\CacheFactory
  * @author  Kerem Güneş <k-gun@mail.com>
@@ -60,7 +62,7 @@ final class CacheFactory
     }
 
     /**
-     * Get a cache instance or throw a `CacheException` if no cache instance found with given id.
+     * Get a cache instance or throw `CacheException` if no cache instance found with given id.
      *
      * @param  string $id
      * @return froq\cache\Cache
@@ -123,7 +125,7 @@ final class CacheFactory
     }
 
     /**
-     * Get a static/dynamic agent instance or throw a `CacheException` if no agent instance found with given id.
+     * Get a static/dynamic agent instance or throw `CacheException` if no agent instance found with given id.
      *
      * @param  string $id
      * @return froq\cache\agent\AgentInterface

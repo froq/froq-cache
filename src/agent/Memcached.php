@@ -20,14 +20,11 @@ use Memcached as _Memcached;
  */
 final class Memcached extends AbstractAgent implements AgentInterface
 {
-    /**
-     * Agent trait.
-     * @object froq\cache\agent\AgentTrait
-     */
+    /** @see froq\cache\agent\AgentTrait */
     use AgentTrait;
 
     /**
-     * Host & port.
+     * Default host & port.
      * @const string, int
      * @since 4.3
      */
@@ -36,6 +33,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
 
     /**
      * Constructor.
+     *
      * @param  string     $id
      * @param  array|null $options
      * @throws froq\cache\agent\AgentException
@@ -80,7 +78,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
-        return $this->client->set($key, $value, ($ttl ?? $this->ttl));
+        return $this->client->set($key, $value, $ttl ?? $this->ttl);
     }
 
     /**
@@ -89,6 +87,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
     public function get(string $key, $default = null)
     {
         $value = $this->client->get($key);
+
         if ($this->client->getResultCode() === _Memcached::RES_NOTFOUND) {
             $value = $default;
         }

@@ -53,7 +53,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
      */
     public function set(string $key, $value, int $ttl = null): bool
     {
-        return apcu_store($key, $value, ($ttl ?? $this->ttl));
+        return apcu_store($key, $value, $ttl ?? $this->ttl);
     }
 
     /**
@@ -62,6 +62,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     public function get(string $key, $default = null)
     {
         $value = $default;
+
         if (apcu_exists($key)) {
             $value = apcu_fetch($key, $ok);
             if (!$ok) {

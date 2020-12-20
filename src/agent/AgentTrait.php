@@ -12,7 +12,7 @@ use Memcached, Redis;
 /**
  * Agent Trait.
  *
- * Used by Memcached & Redis classes only to hold native client properties.
+ * Used by Memcached & Redis classes only for holding those native client properties and methods.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentTrait

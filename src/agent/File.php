@@ -20,13 +20,10 @@ use Error;
  */
 final class File extends AbstractAgent implements AgentInterface
 {
-    /**
-     * Options.
-     * @var array
-     */
+    /** @var array */
     private $options = [
         'directory'     => null,  // Must be given in constructor.
-        'file'          => null,  // Set in runtime.
+        'file'          => null,  // will be set in runtime.
         'serialize'     => 'php', // Only 'php' or 'json'.
         'compress'      => false, // Compress serialized data.
         'compressCheck' => false, // Verify compressed data.
@@ -34,6 +31,7 @@ final class File extends AbstractAgent implements AgentInterface
 
     /**
      * Constructor.
+     *
      * @param string     $id
      * @param array|null $options
      */
@@ -41,11 +39,13 @@ final class File extends AbstractAgent implements AgentInterface
     {
         parent::__construct($id, AgentInterface::FILE, $options);
 
-        // Filter self options only.
-        $options = array_filter($options ?? [],
-            fn($k) => array_key_exists($k, $this->options), 2);
+        if ($options != null) {
+            // Filter self options only.
+            $options = array_filter($options,
+                fn($k) => array_key_exists($k, $this->options), 2);
 
-        $options && $this->options = array_merge($this->options, $options);
+            $this->options = array_merge($this->options, $options);
+        }
     }
 
     /**
@@ -186,16 +186,18 @@ final class File extends AbstractAgent implements AgentInterface
     }
 
     /**
-     * Get options.
+     * Get options property.
+     *
      * @return array
      */
-    public function getOptions(): array
+    public function options(): array
     {
         return $this->options;
     }
 
     /**
-     * Set directory.
+     * Set directory option.
+     *
      * @return self
      * @since  4.0
      */
@@ -207,7 +209,8 @@ final class File extends AbstractAgent implements AgentInterface
     }
 
     /**
-     * Get directory.
+     * Get directory option.
+     *
      * @return string
      * @since  4.0
      */
@@ -217,7 +220,8 @@ final class File extends AbstractAgent implements AgentInterface
     }
 
     /**
-     * Get file path.
+     * Prepare file path and set it as option.
+     *
      * @param  string $key
      * @return string
      * @since  4.0 Renamed as getFilePath().
@@ -226,7 +230,7 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $file = sprintf('%s/%s.cache', $this->options['directory'], $key);
 
-        // Also cache file..
+        // Also cache file.
         $this->options['file'] = $file;
 
         return $file;
@@ -234,37 +238,37 @@ final class File extends AbstractAgent implements AgentInterface
 
     /**
      * Serialize.
+     *
      * @param  any $value
      * @return string
      * @throws froq\cache\agent\AgentException
      */
     private function serialize($value): string
     {
-        return match (strtolower($this->options['serialize'])) {
+        return match ($this->options['serialize']) {
             'php'   => (string) serialize($value),
             'json'  => (string) json_encode($value, JSON_UNESCAPED_UNICODE |
                                                     JSON_UNESCAPED_SLASHES |
                                                     JSON_PRESERVE_ZERO_FRACTION),
-            default =>
-                throw new AgentException('Unimplemented serialize option `%s`', $this->options['serialize'])
+            default => throw new AgentException('Invalid `serialize` option `%s`, valids are: php, json',
+                $this->options['serialize'])
         };
     }
 
     /**
      * Unserialize.
+     *
      * @param  string $value
      * @return any
      * @throws froq\cache\agent\AgentException
      */
     private function unserialize(string $value)
     {
-        $option = strtolower($this->options['serialize']);
-
-        return match ($option) {
+        return match ($this->options['serialize']) {
             'php'   => unserialize($value),
             'json'  => json_decode($value),
-            default =>
-                throw new AgentException('Unimplemented serialize option `%s`', $this->options['serialize'])
+            default => throw new AgentException('Invalid `serialize` option `%s`, valids are: php, json',
+                $this->options['serialize'])
         };
     }
 }
