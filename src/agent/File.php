@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2015 · Kerem Güneş
- * Apache License 2.0 <https://opensource.org/licenses/apache-2.0>
+ * Apache License 2.0 · http://github.com/froq/froq-cache
  */
 declare(strict_types=1);
 
@@ -15,7 +15,7 @@ use Error;
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\File
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   1.0
  */
 final class File extends AbstractAgent implements AgentInterface

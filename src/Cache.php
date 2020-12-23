@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (c) 2015 · Kerem Güneş
- * Apache License 2.0 <https://opensource.org/licenses/apache-2.0>
+ * Apache License 2.0 · http://github.com/froq/froq-cache
  */
 declare(strict_types=1);
 
@@ -18,7 +18,7 @@ use froq\cache\agent\AgentInterface;
  *
  * @package froq\cache
  * @object  froq\cache\Cache
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   4.1 Replaced/moved with/to CacheFactory.
  */
 final class Cache
