@@ -92,16 +92,17 @@ final class CacheFactory
      */
     public static function initAgent(string $id, array $options): AgentInterface
     {
-        $key = self::prepareKey('agent', $id);
-
         [$static, $name] = [
             (bool) ($options['static'] ?? true), // @default
             (string) $options['name'],
         ];
 
         // Return stored instance.
-        if ($static && isset(self::$instances[$key])) {
-            return self::$instances[$key];
+        if ($static) {
+            $key = self::prepareKey('agent', $id);
+            if (isset(self::$instances[$key])) {
+                return self::$instances[$key];
+            }
         }
 
         $agent = match ($name) {
