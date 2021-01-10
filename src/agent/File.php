@@ -24,8 +24,8 @@ final class File extends AbstractAgent implements AgentInterface
     private $options = [
         'directory'     => null,  // Must be given in constructor.
         'file'          => null,  // will be set in runtime.
-        'serialize'     => 'php', // Only 'php' or 'json'.
-        'compress'      => false, // Compress serialized data.
+        'serialize'     => null,  // Only 'php' or 'json'.
+        'compress'      => false, // Compress data.
         'compressCheck' => false, // Verify compressed data.
     ];
 
@@ -104,7 +104,9 @@ final class File extends AbstractAgent implements AgentInterface
             return true;
         }
 
-        $value = $this->serialize($value);
+        if ($this->options['serialize']) {
+            $value = $this->serialize($value);
+        }
 
         if ($this->options['compress']) {
             $value = gzcompress($value);
@@ -134,7 +136,11 @@ final class File extends AbstractAgent implements AgentInterface
             }
         }
 
-        return $this->unserialize($value);
+        if ($this->options['serialize']) {
+            $value = $this->unserialize($value);
+        }
+
+        return $value;
     }
 
     /**
@@ -155,7 +161,7 @@ final class File extends AbstractAgent implements AgentInterface
             $directory .= '/' . trim($subDirectory, '/');
         }
 
-        static $extension = '.cache';
+        $extension = '.cache';
 
         try {
             // Try fastest way, so far..
