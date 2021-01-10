@@ -42,7 +42,7 @@ final class File extends AbstractAgent implements AgentInterface
         if ($options != null) {
             // Filter self options only.
             $options = array_filter($options,
-                fn($k) => array_key_exists($k, $this->options), 2);
+                fn($key) => array_key_exists($key, $this->options), 2);
 
             $this->options = array_merge($this->options, $options);
         }

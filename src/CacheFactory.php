@@ -52,7 +52,7 @@ final class CacheFactory
         if (!isset(self::$instances[$key])) {
             // Try to get existing agent in agent instances.
             try {
-                self::$instances[$key] = new Cache($id, options: self::getAgentInstance($options['id']));
+                self::$instances[$key] = new Cache($id, $options, self::getAgentInstance($options['id']));
             } catch (CacheException) {
                 self::$instances[$key] = new Cache($id, $options);
             }
