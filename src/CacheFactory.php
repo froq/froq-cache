@@ -1,26 +1,7 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-cache
  */
 declare(strict_types=1);
 
@@ -31,22 +12,23 @@ use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
 
 /**
  * Cache Factory.
+ *
+ * Represents a factory entity which responsible with creating/storing cache or cache agent objects.
+ *
  * @package froq\cache
  * @object  froq\cache\CacheFactory
- * @author  Kerem Güneş <k-gun@mail.com>
- * @since   4.1, 4.3 Renamed as CacheFactory, added new methods.
+ * @author  Kerem Güneş
+ * @since   4.1, 4.3 Renamed from Cache, refactored.
  * @static
  */
 final class CacheFactory
 {
-    /**
-     * Instances.
-     * @var array<string, froq\cache\Cache|froq\cache\agent\AgentInterface>
-     */
+    /** @var array<string, froq\cache\Cache|froq\cache\agent\AgentInterface> */
     private static array $instances = [];
 
     /**
-     * Instances.
+     * Get instance stack.
+     *
      * @return array
      * @since  4.3
      */
@@ -56,7 +38,8 @@ final class CacheFactory
     }
 
     /**
-     * Init.
+     * Initiate a cache object and store it with given id.
+     *
      * @param  string $id
      * @param  array  $options
      * @return froq\cache\Cache
@@ -69,8 +52,8 @@ final class CacheFactory
         if (!isset(self::$instances[$key])) {
             // Try to get existing agent in agent instances.
             try {
-                self::$instances[$key] = new Cache($id, [], self::getAgentInstance($options['id']));
-            } catch (CacheException $e) {
+                self::$instances[$key] = new Cache($id, $options, self::getAgentInstance($options['id']));
+            } catch (CacheException) {
                 self::$instances[$key] = new Cache($id, $options);
             }
         }
@@ -79,7 +62,8 @@ final class CacheFactory
     }
 
     /**
-     * Get instance.
+     * Get a cache instance or throw `CacheException` if no cache instance found with given id.
+     *
      * @param  string $id
      * @return froq\cache\Cache
      * @throws froq\cache\CacheException
@@ -93,12 +77,13 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException('No cache initiated with "%s" name, '.
-            'call "%s::init()" to initiate first', [$id, self::class]);
+        throw new CacheException('No cache initiated with name `%s`, call %s::init() to initiate first',
+            [$id, self::class]);
     }
 
     /**
-     * Init agent.
+     * Initiate a static/dynamic agent instance with given id.
+     *
      * @param  string $id
      * @param  array  $options
      * @return froq\cache\agent\AgentInterface
@@ -107,34 +92,27 @@ final class CacheFactory
      */
     public static function initAgent(string $id, array $options): AgentInterface
     {
-        $key = self::prepareKey('agent', $id);
-
         [$static, $name] = [
             (bool) ($options['static'] ?? true), // @default
             (string) $options['name'],
         ];
 
         // Return stored instance.
-        if ($static && isset(self::$instances[$key])) {
-            return self::$instances[$key];
+        if ($static) {
+            $key = self::prepareKey('agent', $id);
+            if (isset(self::$instances[$key])) {
+                return self::$instances[$key];
+            }
         }
 
-        switch (strtolower($name)) {
-            case AgentInterface::FILE:
-                $agent = new File($id, $options);
-                break;
-            case AgentInterface::APCU:
-                $agent = new Apcu($id, $options);
-                break;
-            case AgentInterface::REDIS:
-                $agent = new Redis($id, $options);
-                break;
-            case AgentInterface::MEMCACHED:
-                $agent = new Memcached($id, $options);
-                break;
-            default:
-                throw new CacheException('Unimplemented agent name "%s" given', [$name]);
-        }
+        $agent = match ($name) {
+            AgentInterface::FILE      => new File($id, $options),
+            AgentInterface::APCU      => new Apcu($id, $options),
+            AgentInterface::REDIS     => new Redis($id, $options),
+            AgentInterface::MEMCACHED => new Memcached($id, $options),
+            default =>
+                throw new CacheException('Unimplemented agent name `%s`', $name)
+        };
 
         // Connect etc (@see AgentInterface.init()).
         $agent->init();
@@ -148,7 +126,8 @@ final class CacheFactory
     }
 
     /**
-     * Get agent instance.
+     * Get a static/dynamic agent instance or throw `CacheException` if no agent instance found with given id.
+     *
      * @param  string $id
      * @return froq\cache\agent\AgentInterface
      * @throws froq\cache\CacheException
@@ -162,12 +141,13 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException('No cache agent initiated with "%s" id as static, '.
-            'call "%s::initAgent()" with static=true option to initiate first', [$id, self::class]);
+        throw new CacheException('No cache agent initiated with id `%s` as static, call %s::initAgent()'
+            . ' with static=true option to initiate first', [$id, self::class]);
     }
 
     /**
-     * Key.
+     * Prepare a key with given id.
+     *
      * @param  string $base
      * @param  string $id
      * @return string
@@ -175,6 +155,6 @@ final class CacheFactory
      */
     private static function prepareKey(string $base, string $id): string
     {
-        return $base .'@'. trim($id);
+        return $base . '@' . trim($id);
     }
 }

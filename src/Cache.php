@@ -1,61 +1,40 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-cache
  */
 declare(strict_types=1);
 
 namespace froq\cache;
 
-use froq\cache\{CacheFactory, CacheException};
+use froq\cache\{CacheException, CacheFactory};
 use froq\cache\agent\AgentInterface;
 
 /**
  * Cache.
+ *
+ * Represents a simple class entity which is able to read/write operations, and also to do removals
+ * and validations.
+ *
  * @package froq\cache
  * @object  froq\cache\Cache
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   4.1 Replaced/moved with/to CacheFactory.
  */
 final class Cache
 {
-    /**
-     * Id.
-     * @var string
-     * @since 4.3
-     */
+    /** @var string @since 4.3 */
     private string $id;
 
-    /**
-     * Agent.
-     * @var froq\cache\agent\AgentInterface
-     */
+    /** @var froq\cache\agent\AgentInterface */
     private AgentInterface $agent;
 
     /**
      * Constructor.
-     * @param string                               $id
-     * @param array                                $options
-     * @param froq\cache\agent\AgentInterface|null $agent @internal @see CacheFactory.init()
+     *
+     * @param  string                               $id
+     * @param  array                                $options
+     * @param  froq\cache\agent\AgentInterface|null $agent @internal @see CacheFactory.init()
      * @throws froq\cache\CacheException
      */
     public function __construct(string $id, array $options, AgentInterface $agent = null)
@@ -76,7 +55,8 @@ final class Cache
     }
 
     /**
-     * Id.
+     * Get id property.
+     *
      * @return string
      * @since  4.3
      */
@@ -86,8 +66,9 @@ final class Cache
     }
 
     /**
-     * Agent.
-     * @return AgentInterface
+     * Get agent property.
+     *
+     * @return froq\cache\agent\AgentInterface
      * @since  4.2
      */
     public function agent(): AgentInterface
@@ -96,11 +77,12 @@ final class Cache
     }
 
     /**
-     * Has.
-     * @param  string|int|array<string|int> $key
+     * Check whether cache contains an entry or some entries.
+     *
+     * @param  string|int|array $key
      * @return bool
      */
-    public function has($key): bool
+    public function has(string|int|array $key): bool
     {
         $keys = $this->prepare($key, $single, __function__);
 
@@ -121,13 +103,14 @@ final class Cache
     }
 
     /**
-     * Write.
-     * @param  string|int|array<string|int> $key
-     * @param  any|null                     $value
-     * @param  int|null                     $ttl
+     * Write an entry or some entries to cache.
+     *
+     * @param  string|int|array $key
+     * @param  any|null         $value
+     * @param  int|null         $ttl
      * @return bool
      */
-    public function write($key, $value = null, int $ttl = null): bool
+    public function write(string|int|array $key, $value = null, int $ttl = null): bool
     {
         $keys = $this->prepare($key, $single, __function__, func_num_args());
 
@@ -146,35 +129,37 @@ final class Cache
     }
 
     /**
-     * Read.
-     * @param  string|int|array<string|int> $key
-     * @param  any|null                     $valueDefault
-     * @param  int|null                     $ttl For only "file" agent here.
+     * Read an entry or some entries from cache.
+     *
+     * @param  string|int|array $key
+     * @param  any|null         $default
+     * @param  int|null         $ttl For only "file" agent here.
      * @return any|null
      */
-    public function read($key, $valueDefault = null, int $ttl = null)
+    public function read(string|int|array $key, $default = null, int $ttl = null)
     {
         $keys = $this->prepare($key, $single, __function__);
 
         if ($single) {
-            return $this->agent->get($keys[0], $valueDefault, $ttl);
+            return $this->agent->get($keys[0], $default, $ttl);
         }
 
         $ret = null; // Don't apply value default for empty keys.
 
         foreach ($keys as [$key]) {
-            $ret[] = $this->agent->get($key, $valueDefault, $ttl);
+            $ret[] = $this->agent->get($key, $default, $ttl);
         }
 
         return $ret;
     }
 
     /**
-     * Remove.
-     * @param  string|int|array<string|int> $key
+     * Remove an entry or some entries from cache.
+     *
+     * @param  string|int|array $key
      * @return bool
      */
-    public function remove($key): bool
+    public function remove(string|int|array $key): bool
     {
         $keys = $this->prepare($key, $single, __function__);
 
@@ -192,7 +177,8 @@ final class Cache
     }
 
     /**
-     * Flush.
+     * Drop all entries from cache.
+     *
      * @return bool
      */
     public function flush(): bool
@@ -201,47 +187,38 @@ final class Cache
     }
 
     /**
-     * Prepare.
+     * Prepare key/keys.
+     *
      * @param  string|int|array  $key
      * @param  bool             &$single
      * @param  string            $func
      * @param  int|null          $argc
      * @return array
      * @throws froq\cache\CacheException
-     * @todo   Use "union" type for $key argument.
      */
-    private function prepare($key, ?bool &$single, string $func, int $argc = null): array
+    private function prepare(string|int|array $key, ?bool &$single, string $func, int $argc = null): array
     {
         $single = is_string($key) || is_int($key);
         if ($single) {
             // Second argument is required for write().
             if (isset($argc) && $argc < 2) {
-                throw new CacheException('Invalid argument count "%s" for "%s::%s()", $value '.
-                    'is required when a single key given', [$argc, self::class, $func]);
+                throw new CacheException('Invalid argument count %s for %s::%s(), value is'
+                    . ' required when a single key given', [$argc, self::class, $func]);
             }
 
             $ret = [$this->prepareKey($key)];
         } else {
-            if (!is_array($key)) {
-                throw new CacheException('Invalid $key type "%s" for "%s::%s()", valids are: '.
-                    'string, int, array<string|int>', [gettype($key), self::class, $func]);
-            }
-
             $ret = [];
 
             if ($func == 'write') {
                 // Generate entries for write() only.
                 foreach ($key as $key => $value) {
-                    if (is_string($key) || is_int($key)) {
-                        $ret[] = [$this->prepareKey($key), $value];
-                    }
+                    $ret[] = [$this->prepareKey($key), $value];
                 }
             } else {
-                // Check only key types for all others.
+                // Check only key types & stringify keys for all others.
                 foreach ($key as $key) {
-                    if (is_string($key) || is_int($key)) {
-                        $ret[] = [$this->prepareKey($key)];
-                    }
+                    $ret[] = [$this->prepareKey($key)];
                 }
             }
         }
@@ -249,20 +226,18 @@ final class Cache
         // Prevent empty key errors.
         $ret = array_filter($ret, fn($r) => strlen($r[0]));
 
-        if (!$ret) {
-            throw new CacheException('No valid keys/entries given for cache operations');
-        }
+        $ret || throw new CacheException('No valid keys/entries given for cache operation');
 
         return $ret;
     }
 
     /**
-     * Prepare key.
+     * Prepare a key.
+     *
      * @param  string|int $key
      * @return string
-     * @todo   Use "union" type for $key argument.
      */
-    private function prepareKey($key): string
+    private function prepareKey(string|int $key): string
     {
         return trim((string) $key);
     }

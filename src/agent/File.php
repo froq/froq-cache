@@ -1,26 +1,7 @@
 <?php
 /**
- * MIT License <https://opensource.org/licenses/mit>
- *
- * Copyright (c) 2015 Kerem Güneş
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished
- * to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * Copyright (c) 2015 · Kerem Güneş
+ * Apache License 2.0 · http://github.com/froq/froq-cache
  */
 declare(strict_types=1);
 
@@ -31,27 +12,26 @@ use Error;
 
 /**
  * File.
+ *
  * @package froq\cache\agent
  * @object  froq\cache\agent\File
- * @author  Kerem Güneş <k-gun@mail.com>
+ * @author  Kerem Güneş
  * @since   1.0
  */
 final class File extends AbstractAgent implements AgentInterface
 {
-    /**
-     * Options.
-     * @var array
-     */
+    /** @var array */
     private $options = [
         'directory'     => null,  // Must be given in constructor.
-        'file'          => null,  // Set in runtime.
-        'serialize'     => 'php', // Only 'php' or 'json'.
-        'compress'      => false, // Compress serialized data.
+        'file'          => null,  // will be set in runtime.
+        'serialize'     => null,  // Only 'php' or 'json'.
+        'compress'      => false, // Compress data.
         'compressCheck' => false, // Verify compressed data.
     ];
 
     /**
      * Constructor.
+     *
      * @param string     $id
      * @param array|null $options
      */
@@ -59,11 +39,13 @@ final class File extends AbstractAgent implements AgentInterface
     {
         parent::__construct($id, AgentInterface::FILE, $options);
 
-        // Filter self options only.
-        $options = array_filter($options ?? [],
-            fn($k) => array_key_exists($k, $this->options), 2);
+        if ($options != null) {
+            // Filter self options only.
+            $options = array_filter($options,
+                fn($key) => array_key_exists($key, $this->options), 2);
 
-        $options && $this->options = array_merge($this->options, $options);
+            $this->options = array_merge($this->options, $options);
+        }
     }
 
     /**
@@ -72,14 +54,11 @@ final class File extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         if (empty($this->options['directory'])) {
-            throw new AgentException('Cache directory must not be empty');
+            throw new AgentException('Cache directory option must not be empty');
         }
 
-        if (!is_dir($this->options['directory'])) {
-            $ok =@ mkdir($this->options['directory'], 0755, true);
-            if (!$ok) {
-                throw new AgentException('Cannot make directory [error: %s]', ['@error']);
-            }
+        if (!is_dir($this->options['directory']) && !mkdir($this->options['directory'], 0755, true)) {
+            throw new AgentException('Cannot make directory [error: %s]', '@error');
         }
 
         return $this;
@@ -125,7 +104,9 @@ final class File extends AbstractAgent implements AgentInterface
             return true;
         }
 
-        $value = $this->serialize($value);
+        if ($this->options['serialize']) {
+            $value = $this->serialize($value);
+        }
 
         if ($this->options['compress']) {
             $value = gzcompress($value);
@@ -140,10 +121,10 @@ final class File extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $valueDefault = null, int $ttl = null)
+    public function get(string $key, $default = null, int $ttl = null)
     {
         if (!$this->has($key, $ttl)) {
-            return $valueDefault;
+            return $default;
         }
 
         $value = (string) file_get_contents($this->prepareFile($key));
@@ -155,7 +136,11 @@ final class File extends AbstractAgent implements AgentInterface
             }
         }
 
-        return $this->unserialize($value);
+        if ($this->options['serialize']) {
+            $value = $this->unserialize($value);
+        }
+
+        return $value;
     }
 
     /**
@@ -163,7 +148,7 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function delete(string $key): bool
     {
-        return @ unlink($this->prepareFile($key));
+        return unlink($this->prepareFile($key));
     }
 
     /**
@@ -173,26 +158,26 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $directory = $this->options['directory'];
         if ($subDirectory != '') {
-            $directory .= '/'. trim($subDirectory, '/');
+            $directory .= '/' . trim($subDirectory, '/');
         }
 
         $extension = '.cache';
 
         try {
             // Try fastest way, so far..
-            exec('find '.
-                escapeshellarg($directory) .' -name *'.
-                escapeshellarg($extension) .' -print0 | xargs -0 rm');
-        } catch (Error $e) {
+            exec('find ' . escapeshellarg($directory)
+               . ' -name *' . escapeshellarg($extension)
+               . ' -print0 | xargs -0 rm');
+        } catch (Error) {
             // Oh my..
             static $rmrf;
             $rmrf ??= function ($directory) use (&$rmrf, $extension) {
-                $glob = glob($directory .'/*');
+                $glob = glob($directory . '/*');
                 foreach ($glob as $path) {
                     if (is_dir($path)) {
-                        $rmrf($path .'/*');
+                        $rmrf($path . '/*');
                         rmdir($path);
-                    } elseif (is_file($path) && strpos($path, $extension)) {
+                    } elseif (is_file($path) && str_ends_with($path, $extension)) {
                         unlink($path);
                     }
                 }
@@ -201,22 +186,24 @@ final class File extends AbstractAgent implements AgentInterface
             $rmrf($directory);
         }
 
-        $glob = glob($directory .'/*');
+        $glob = glob($directory . '/*');
 
         return empty($glob);
     }
 
     /**
-     * Get options.
+     * Get options property.
+     *
      * @return array
      */
-    public function getOptions(): array
+    public function options(): array
     {
         return $this->options;
     }
 
     /**
-     * Set directory.
+     * Set directory option.
+     *
      * @return self
      * @since  4.0
      */
@@ -228,7 +215,8 @@ final class File extends AbstractAgent implements AgentInterface
     }
 
     /**
-     * Get directory.
+     * Get directory option.
+     *
      * @return string
      * @since  4.0
      */
@@ -238,7 +226,8 @@ final class File extends AbstractAgent implements AgentInterface
     }
 
     /**
-     * Get file path.
+     * Prepare file path and set it as option.
+     *
      * @param  string $key
      * @return string
      * @since  4.0 Renamed as getFilePath().
@@ -247,7 +236,7 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $file = sprintf('%s/%s.cache', $this->options['directory'], $key);
 
-        // Also cache file..
+        // Also cache file.
         $this->options['file'] = $file;
 
         return $file;
@@ -255,42 +244,37 @@ final class File extends AbstractAgent implements AgentInterface
 
     /**
      * Serialize.
+     *
      * @param  any $value
      * @return string
      * @throws froq\cache\agent\AgentException
      */
     private function serialize($value): string
     {
-        $option = strtolower($this->options['serialize']);
-
-        switch ($option) {
-            case 'php':
-                return (string) serialize($value);
-            case 'json':
-                return (string) json_encode($value,
-                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
-        }
-
-        throw new AgentException('Unimplemented serialize option "%s" given', [$option]);
+        return match ($this->options['serialize']) {
+            'php'   => (string) serialize($value),
+            'json'  => (string) json_encode($value, JSON_UNESCAPED_UNICODE |
+                                                    JSON_UNESCAPED_SLASHES |
+                                                    JSON_PRESERVE_ZERO_FRACTION),
+            default => throw new AgentException('Invalid `serialize` option `%s`, valids are: php, json',
+                $this->options['serialize'])
+        };
     }
 
     /**
      * Unserialize.
+     *
      * @param  string $value
      * @return any
      * @throws froq\cache\agent\AgentException
      */
     private function unserialize(string $value)
     {
-        $option = strtolower($this->options['serialize']);
-
-        switch ($option) {
-            case 'php':
-                return unserialize($value);
-            case 'json':
-                return json_decode($value);
-        }
-
-        throw new AgentException('Unimplemented serialize option "%s" given', [$option]);
+        return match ($this->options['serialize']) {
+            'php'   => unserialize($value),
+            'json'  => json_decode($value),
+            default => throw new AgentException('Invalid `serialize` option `%s`, valids are: php, json',
+                $this->options['serialize'])
+        };
     }
 }
