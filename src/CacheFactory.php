@@ -27,7 +27,7 @@ final class CacheFactory
     private static array $instances = [];
 
     /**
-     * Get instance stack.
+     * Get instances.
      *
      * @return array
      * @since  4.3
