@@ -230,7 +230,7 @@ final class File extends AbstractAgent implements AgentInterface
      *
      * @param  string $key
      * @return string
-     * @since  4.0 Renamed as getFilePath().
+     * @since  4.0
      */
     private function prepareFile(string $key): string
     {
