@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
-use Redis as _Redis;
 
 /**
  * Redis.
@@ -55,7 +54,7 @@ final class Redis extends AbstractAgent implements AgentInterface
     {
         ($this->host && $this->port) || throw new AgentException('Host or port can not be empty');
 
-        $client = new _Redis();
+        $client = new \Redis();
         $client->pconnect($this->host, $this->port);
 
         $this->setClient($client);
