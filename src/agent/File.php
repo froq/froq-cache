@@ -20,10 +20,12 @@ use Error;
  */
 final class File extends AbstractAgent implements AgentInterface
 {
+    /** @var string */
+    private string $file;
+
     /** @var array */
-    private $options = [
+    private array $options = [
         'directory'     => null,  // Must be given in constructor.
-        'file'          => null,  // will be set in runtime.
         'serialize'     => null,  // Only 'php' or 'json'.
         'compress'      => false, // Compress data.
         'compressCheck' => false, // Verify compressed data.
@@ -39,7 +41,7 @@ final class File extends AbstractAgent implements AgentInterface
     {
         parent::__construct($id, AgentInterface::FILE, $options);
 
-        if ($options != null) {
+        if ($options) {
             // Filter self options only.
             $options = array_filter($options,
                 fn($key) => array_key_exists($key, $this->options), 2);
@@ -53,11 +55,12 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function init(): AgentInterface
     {
-        if (empty($this->options['directory'])) {
-            throw new AgentException('Cache directory option must not be empty');
+        $directory = trim($this->options['directory'] ?? '');
+        if ($directory == '') {
+            throw new AgentException('Cache directory option cannot be empty');
         }
 
-        if (!is_dir($this->options['directory']) && !mkdir($this->options['directory'], 0755, true)) {
+        if (!is_dir($directory) && !mkdir($directory, 0755, true)) {
             throw new AgentException('Cannot make directory [error: %s]', '@error');
         }
 
@@ -71,26 +74,31 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $file = $this->prepareFile($key);
         if (!is_file($file) || !filesize($file)) {
+            $this->deleteFile($file);
             return false;
         }
 
-        if ($this->options['compress'] && $this->options['compressCheck']) {
-            $magic = (string) file_get_contents($file, false, null, 0, 2);
-            // Check corruption (https://stackoverflow.com/a/9050274/362780).
-            if (stripos($magic, "\x78\x9c") !== 0) {
-                return false;
-            }
-        }
-
-        $fileMTime = (int) filemtime($file);
-        if ($fileMTime == 0) {
+        // Check corruption, level=6 (https://stackoverflow.com/a/9050274/362780).
+        if ($this->options['compress']
+            && $this->options['compressCheck']
+            && file_get_contents($file, length: 2) != "\x78\x9C") {
+            $this->deleteFile($file);
             return false;
         }
-        if ($fileMTime > time() - ($ttl ?? $this->ttl)) {
-            return true; // Live.
+
+        $time = filemtime($file);
+        if (!$time) {
+            $this->deleteFile($file);
+            return false;
         }
 
-        unlink($file); // Not live (do gc).
+        // Live.
+        if ($time > time() - ($ttl ?? $this->ttl)) {
+            return true;
+        }
+
+        // Dead (do gc).
+        $this->deleteFile($file);
 
         return false;
     }
@@ -104,18 +112,21 @@ final class File extends AbstractAgent implements AgentInterface
             return true;
         }
 
+        $file = $this->file;
+
         if ($this->options['serialize']) {
             $value = $this->serialize($value);
         }
 
         if ($this->options['compress']) {
-            $value = gzcompress($value);
+            $value = gzcompress($value, level: 6);
             if ($value === false) {
+                $this->deleteFile($file);
                 return false;
             }
         }
 
-        return (bool) file_put_contents($this->prepareFile($key), $value, LOCK_EX);
+        return (bool) file_set_contents($file, $value);
     }
 
     /**
@@ -127,11 +138,18 @@ final class File extends AbstractAgent implements AgentInterface
             return $default;
         }
 
-        $value = (string) file_get_contents($this->prepareFile($key));
+        $file = $this->file;
+
+        $value = file_get_contents($file);
+        if ($value === false) {
+            $this->deleteFile($file);
+            return null;
+        }
 
         if ($this->options['compress']) {
             $value = gzuncompress($value);
             if ($value === false) {
+                $this->deleteFile($file);
                 return null;
             }
         }
@@ -148,7 +166,7 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function delete(string $key): bool
     {
-        return unlink($this->prepareFile($key));
+        return $this->deleteFile($this->prepareFile($key));
     }
 
     /**
@@ -226,54 +244,59 @@ final class File extends AbstractAgent implements AgentInterface
     }
 
     /**
-     * Prepare file path and set it as option.
+     * Get (prepared) file property.
      *
-     * @param  string $key
      * @return string
-     * @since  4.0
+     * @since  6.0
+     * @throws froq\cache\agent\AgentException
+     */
+    public function file(): string
+    {
+        return $this->file ?? throw new AgentException(
+            'No file yet, try after calling set(), get() or has()'
+        );
+    }
+
+    /**
+     * Prepare file path & set/update file property.
      */
     private function prepareFile(string $key): string
     {
-        $file = sprintf('%s/%s.cache', $this->options['directory'], $key);
+        return $this->file = sprintf(
+            '%s/%s.cache', $this->options['directory'], md5($key)
+        );
+    }
 
-        // Also cache file.
-        $this->options['file'] = $file;
-
-        return $file;
+    /**
+     * Delete file.
+     */
+    private function deleteFile(string $file): bool
+    {
+        return is_file($file) && unlink($file);
     }
 
     /**
      * Serialize.
-     *
-     * @param  any $value
-     * @return string
-     * @throws froq\cache\agent\AgentException
      */
-    private function serialize($value): string
+    private function serialize(mixed $value): string
     {
         return match ($this->options['serialize']) {
-            'php'   => (string) serialize($value),
-            'json'  => (string) json_encode($value, JSON_UNESCAPED_UNICODE |
-                                                    JSON_UNESCAPED_SLASHES |
-                                                    JSON_PRESERVE_ZERO_FRACTION),
-            default => throw new AgentException('Invalid `serialize` option `%s`, valids are: php, json',
+            'php'   => serialize($value),
+            'json'  => json_encode($value, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRESERVE_ZERO_FRACTION),
+            default => throw new AgentException('Invalid serialize option `%s` [valids: php, json]',
                 $this->options['serialize'])
         };
     }
 
     /**
      * Unserialize.
-     *
-     * @param  string $value
-     * @return any
-     * @throws froq\cache\agent\AgentException
      */
-    private function unserialize(string $value)
+    private function unserialize(string $value): mixed
     {
         return match ($this->options['serialize']) {
             'php'   => unserialize($value),
             'json'  => json_decode($value),
-            default => throw new AgentException('Invalid `serialize` option `%s`, valids are: php, json',
+            default => throw new AgentException('Invalid serialize option `%s` [valids: php, json]',
                 $this->options['serialize'])
         };
     }
