@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
-
 /**
  * Apcu.
+ *
+ * An APCu extension wrapper class.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\Apcu
@@ -27,9 +27,11 @@ final class Apcu extends AbstractAgent implements AgentInterface
      */
     public function __construct(string $id, array $options = null)
     {
-        extension_loaded('apcu') || throw new AgentException('APCu extension not found');
+        if (!extension_loaded('apcu')) {
+            throw new AgentException('APCu extension not loaded');
+        }
 
-        parent::__construct($id, AgentInterface::APCU, $options);
+        parent::__construct($id, 'apcu', $options);
     }
 
     /**

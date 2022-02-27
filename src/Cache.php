@@ -7,23 +7,21 @@ declare(strict_types=1);
 
 namespace froq\cache;
 
-use froq\cache\{CacheException, CacheFactory};
 use froq\cache\agent\AgentInterface;
 
 /**
  * Cache.
  *
- * Represents a simple class entity which is able to read/write operations, and also to do removals
- * and validations.
+ * A simple cache class for read/write operations, also removals and validations.
  *
  * @package froq\cache
  * @object  froq\cache\Cache
  * @author  Kerem Güneş
- * @since   4.1 Replaced/moved with/to CacheFactory.
+ * @since   4.1
  */
 final class Cache
 {
-    /** @var string @since 4.3 */
+    /** @var string */
     private string $id;
 
     /** @var froq\cache\agent\AgentInterface */

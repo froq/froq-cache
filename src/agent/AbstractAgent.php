@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\agent\AgentInterface;
-
 /**
  * Abstract Agent.
+ *
+ * An abstract class that extended by agent classes.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\AbstractAgent
@@ -20,15 +20,15 @@ use froq\cache\agent\AgentInterface;
 abstract class AbstractAgent
 {
     /** @const int */
-    public const TTL = 60; // 1 min.
+    public final const TTL = 60; // 1 min.
 
-    /** @var string @since 4.3 */
+    /** @var string */
     protected string $id;
 
     /** @var string */
     protected string $name;
 
-    /** @var bool @since 4.3 */
+    /** @var bool */
     protected bool $static;
 
     /** @var int */
@@ -45,8 +45,8 @@ abstract class AbstractAgent
     {
         $this->id     = $id;
         $this->name   = $name;
-        $this->static = $options['static'] ?? false;     // @default
-        $this->ttl    = $options['ttl']    ?? self::TTL; // @default
+        $this->static = (bool) ($options['static'] ?? false); // @default
+        $this->ttl    = (int) ($options['ttl'] ?? self::TTL); // @default
     }
 
     /**

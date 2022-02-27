@@ -7,22 +7,26 @@ declare(strict_types=1);
 
 namespace froq\cache;
 
-use froq\cache\{Cache, CacheException};
 use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
 
 /**
  * Cache Factory.
  *
- * Represents a factory entity which responsible with creating/storing cache or cache agent objects.
+ * A factory class available for creating/storing cache or cache agent objects.
  *
  * @package froq\cache
  * @object  froq\cache\CacheFactory
  * @author  Kerem Güneş
- * @since   4.1, 4.3 Renamed from Cache, refactored.
- * @static
+ * @since   4.1, 4.3
  */
 final class CacheFactory
 {
+    /** @const string */
+    public const AGENT_FILE      = 'file',
+                 AGENT_APCU      = 'apcu',
+                 AGENT_REDIS     = 'redis',
+                 AGENT_MEMCACHED = 'memcached';
+
     /** @var array<string, froq\cache\Cache|froq\cache\agent\AgentInterface> */
     private static array $instances = [];
 
@@ -64,7 +68,8 @@ final class CacheFactory
     }
 
     /**
-     * Get a cache instance or throw `CacheException` if no cache instance found with given id.
+     * Get a cache instance or throw `CacheException` if no cache instance found
+     * with given id.
      *
      * @param  string $id
      * @return froq\cache\Cache
@@ -96,35 +101,36 @@ final class CacheFactory
      */
     public static function initAgent(string $id, array $options): AgentInterface
     {
-        [$static, $name] = [
-            (bool)   ($options['static'] ?? true), // @default
-            (string) ($options['name'] ?? ''),
-        ];
+        if (empty($options['agent'])) {
+            throw new CacheException('Option `agent` is empty');
+        }
+
+        $options['static'] ??= true; // @default
 
         // Return stored instance.
-        if ($static) {
+        if ($options['static']) {
             $key = self::prepareKey('agent', $id);
             if (isset(self::$instances[$key])) {
                 return self::$instances[$key];
             }
         }
 
-        $agent = match ($name) {
-            AgentInterface::FILE      => new File($id, $options),
-            AgentInterface::APCU      => new Apcu($id, $options),
-            AgentInterface::REDIS     => new Redis($id, $options),
-            AgentInterface::MEMCACHED => new Memcached($id, $options),
+        $agent = match ($options['agent']) {
+            self::AGENT_FILE      => new File($id, $options),
+            self::AGENT_APCU      => new Apcu($id, $options),
+            self::AGENT_REDIS     => new Redis($id, $options),
+            self::AGENT_MEMCACHED => new Memcached($id, $options),
 
             default => throw new CacheException(
-                'Unimplemented agent name `%s`', $name
+                'Unimplemented agent `%s`', $options['agent']
             ),
         };
 
-        // Connect etc (@see AgentInterface.init()).
+        // Connect etc.
         $agent->init();
 
         // Store instance.
-        if ($static) {
+        if ($options['static']) {
             self::$instances[$key] = $agent;
         }
 
@@ -132,8 +138,8 @@ final class CacheFactory
     }
 
     /**
-     * Get a static/dynamic agent instance or throw `CacheException` if no agent instance found
-     * with given id.
+     * Get a static/dynamic agent instance or throw `CacheException` if no agent
+     * instance found with given id.
      *
      * @param  string $id
      * @return froq\cache\agent\AgentInterface

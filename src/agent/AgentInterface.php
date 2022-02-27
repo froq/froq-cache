@@ -18,15 +18,6 @@ namespace froq\cache\agent;
 interface AgentInterface
 {
     /**
-     * Names.
-     * @const string
-     */
-    public const FILE      = 'file',
-                 APCU      = 'apcu',
-                 REDIS     = 'redis',
-                 MEMCACHED = 'memcached';
-
-    /**
      * Initialize a cache agent.
      *
      * @return froq\cache\agent\AgentInterface

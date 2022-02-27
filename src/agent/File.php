@@ -7,11 +7,10 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
-use Error;
-
 /**
  * File.
+ *
+ * A file cache wrapper class.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\File
@@ -26,7 +25,7 @@ final class File extends AbstractAgent implements AgentInterface
     /** @var array */
     private array $options = [
         'directory'     => null,  // Must be given in constructor.
-        'serialize'     => null,  // Only 'php' or 'json'.
+        'serialize'     => 'php', // Only 'php' or 'json'.
         'compress'      => false, // Compress data.
         'compressCheck' => false, // Verify compressed data.
     ];
@@ -39,7 +38,7 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function __construct(string $id, array $options = null)
     {
-        parent::__construct($id, AgentInterface::FILE, $options);
+        parent::__construct($id, 'file', $options);
 
         if ($options) {
             // Filter self options only.
@@ -57,7 +56,7 @@ final class File extends AbstractAgent implements AgentInterface
     {
         $directory = trim($this->options['directory'] ?? '');
         if ($directory == '') {
-            throw new AgentException('Cache directory option cannot be empty');
+            throw new AgentException('Option `directory` cannot be empty');
         }
 
         if (!is_dir($directory) && !mkdir($directory, 0755, true)) {
@@ -116,6 +115,12 @@ final class File extends AbstractAgent implements AgentInterface
 
         if ($this->options['serialize']) {
             $value = $this->serialize($value);
+        } else {
+            is_string($value) || throw new AgentException(
+                'File contents must be string, %t given '.
+                '[tip: use `serialize` option for serialization]',
+                $value
+            );
         }
 
         if ($this->options['compress']) {
@@ -186,7 +191,7 @@ final class File extends AbstractAgent implements AgentInterface
             exec('find ' . escapeshellarg($directory)
                . ' -name *' . escapeshellarg($extension)
                . ' -print0 | xargs -0 rm');
-        } catch (Error) {
+        } catch (\Error) {
             // Oh my..
             static $rmrf;
             $rmrf ??= function ($directory) use (&$rmrf, $extension) {

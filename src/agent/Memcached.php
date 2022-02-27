@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
-
 /**
  * Memcached.
+ *
+ * A Memcached extension wrapper class.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\Memcached
@@ -39,12 +39,14 @@ final class Memcached extends AbstractAgent implements AgentInterface
      */
     public function __construct(string $id, array $options = null)
     {
-        extension_loaded('memcached') || throw new AgentException('Memcached extension not found');
+        if (!extension_loaded('memcached')) {
+            throw new AgentException('Memcached extension not loaded');
+        }
 
         $this->host = $options['host'] ?? self::HOST;
         $this->port = $options['port'] ?? self::PORT;
 
-        parent::__construct($id, AgentInterface::MEMCACHED, $options);
+        parent::__construct($id, 'memcached', $options);
     }
 
     /**
@@ -52,7 +54,9 @@ final class Memcached extends AbstractAgent implements AgentInterface
      */
     public function init(): AgentInterface
     {
-        ($this->host && $this->port) || throw new AgentException('Host or port can not be empty');
+        if (!$this->host || !$this->port) {
+            throw new AgentException('Host or port cannot be empty');
+        }
 
         $client = new \Memcached();
         $client->addServer($this->host, $this->port);
