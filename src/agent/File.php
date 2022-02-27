@@ -195,17 +195,17 @@ final class File extends AbstractAgent implements AgentInterface
             );
             clearstatcache();
         } catch (\Error) {
-            // Oh my..
-            static $rmrf;
-            $rmrf ??= function ($directory) use (&$rmrf, $extension) {
-                $glob = glob($directory . '/*');
-                foreach ($glob as $path) {
-                    if (is_dir($path)) {
-                        $rmrf($path . '/*');
-                        rmdir($path);
-                    } elseif (is_file($path)) {
-                        str_ends_with($path, $extension)
-                        && unlink($path);
+            // Oh, my lad..
+            $rmrf = function ($root) use (&$rmrf, $extension) {
+                if ($paths = glob($root . '/*')) {
+                    foreach ($paths as $path) {
+                        if (is_dir($path)) {
+                            $rmrf($path . '/*');
+                            rmdir($path);
+                        } elseif (is_file($path)) {
+                            str_ends_with($path, $extension)
+                            && unlink($path);
+                        }
                     }
                 }
             };
@@ -213,9 +213,7 @@ final class File extends AbstractAgent implements AgentInterface
             $rmrf($directory);
         }
 
-        $glob = glob($directory . '/*');
-
-        return empty($glob);
+        return empty(glob($directory . '/*'));
     }
 
     /**
