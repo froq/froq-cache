@@ -188,9 +188,12 @@ final class File extends AbstractAgent implements AgentInterface
 
         try {
             // Try fastest way, so far..
-            exec('find ' . escapeshellarg($directory)
-               . ' -name *' . escapeshellarg($extension)
-               . ' -print0 | xargs -0 rm');
+            exec(
+                'find ' . escapeshellarg($directory) . ' '  .
+                '-name *' . escapeshellarg($extension) . ' '  .
+                '-print0 | xargs -0 rm 2> /dev/null'
+            );
+            clearstatcache();
         } catch (\Error) {
             // Oh my..
             static $rmrf;
@@ -200,8 +203,9 @@ final class File extends AbstractAgent implements AgentInterface
                     if (is_dir($path)) {
                         $rmrf($path . '/*');
                         rmdir($path);
-                    } elseif (is_file($path) && str_ends_with($path, $extension)) {
-                        unlink($path);
+                    } elseif (is_file($path)) {
+                        str_ends_with($path, $extension)
+                        && unlink($path);
                     }
                 }
             };
