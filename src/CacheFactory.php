@@ -50,9 +50,11 @@ final class CacheFactory
 
         // All cache instances are static as default (not like agent instances).
         if (!isset(self::$instances[$key])) {
+            $options['id'] ??= $id;
+
             // Try to get existing agent in agent instances.
             try {
-                self::$instances[$key] = new Cache($id, $options, self::getAgentInstance($options['id']));
+                self::$instances[$key] = new Cache($id, $options, self::getAgentInstance($id));
             } catch (CacheException) {
                 self::$instances[$key] = new Cache($id, $options);
             }
@@ -77,8 +79,10 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException('No cache initiated with name `%s`, call %s::init() to initiate first',
-            [$id, self::class]);
+        throw new CacheException(
+            'No cache initiated with id `%s`, call %s::init() to initiate first',
+            [$id, self::class]
+        );
     }
 
     /**
@@ -93,8 +97,8 @@ final class CacheFactory
     public static function initAgent(string $id, array $options): AgentInterface
     {
         [$static, $name] = [
-            (bool) ($options['static'] ?? true), // @default
-            (string) $options['name'],
+            (bool)   ($options['static'] ?? true), // @default
+            (string) ($options['name'] ?? ''),
         ];
 
         // Return stored instance.
@@ -110,8 +114,10 @@ final class CacheFactory
             AgentInterface::APCU      => new Apcu($id, $options),
             AgentInterface::REDIS     => new Redis($id, $options),
             AgentInterface::MEMCACHED => new Memcached($id, $options),
-            default =>
-                throw new CacheException('Unimplemented agent name `%s`', $name)
+
+            default => throw new CacheException(
+                'Unimplemented agent name `%s`', $name
+            ),
         };
 
         // Connect etc (@see AgentInterface.init()).
@@ -126,7 +132,8 @@ final class CacheFactory
     }
 
     /**
-     * Get a static/dynamic agent instance or throw `CacheException` if no agent instance found with given id.
+     * Get a static/dynamic agent instance or throw `CacheException` if no agent instance found
+     * with given id.
      *
      * @param  string $id
      * @return froq\cache\agent\AgentInterface
@@ -141,8 +148,11 @@ final class CacheFactory
             return self::$instances[$key];
         }
 
-        throw new CacheException('No cache agent initiated with id `%s` as static, call %s::initAgent()'
-            . ' with static=true option to initiate first', [$id, self::class]);
+        throw new CacheException(
+            'No cache agent initiated with id `%s` as static, call %s::initAgent() '.
+            'with static=true option to initiate first',
+            [$id, self::class]
+        );
     }
 
     /**

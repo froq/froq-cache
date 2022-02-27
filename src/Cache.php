@@ -34,19 +34,19 @@ final class Cache
      *
      * @param  string                               $id
      * @param  array                                $options
-     * @param  froq\cache\agent\AgentInterface|null $agent @internal @see CacheFactory.init()
+     * @param  froq\cache\agent\AgentInterface|null $agent
      * @throws froq\cache\CacheException
      */
     public function __construct(string $id, array $options, AgentInterface $agent = null)
     {
         $this->id = $id;
 
-        if ($agent != null) {
+        if ($agent) {
             $this->agent = $agent;
         } else {
             if (empty($options)) {
                 throw new CacheException('No agent options given');
-            } elseif (empty($options['id'])) {
+            } elseif (empty($options['id'] ??= $id)) {
                 throw new CacheException('No agent id given in options');
             }
 
