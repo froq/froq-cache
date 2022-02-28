@@ -54,13 +54,14 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function init(): AgentInterface
     {
-        $directory = trim($this->options['directory'] ?? '');
-        if ($directory == '') {
+        $directory = (string) $this->options['directory'];
+        if (trim($directory) == '') {
             throw new AgentException('Option `directory` cannot be empty');
         }
 
         if (!is_dir($directory) && !mkdir($directory, 0755, true)) {
-            throw new AgentException('Cannot make directory [error: %s]', '@error');
+            throw new AgentException('Cannot create cache directory %s [error: %s]',
+                [$directory, '@error']);
         }
 
         return $this;
