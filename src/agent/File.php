@@ -118,7 +118,7 @@ final class File extends AbstractAgent implements AgentInterface
             $value = $this->serialize($value);
         } else {
             is_string($value) || throw new AgentException(
-                'File contents must be string, %t given '.
+                'Argument $value must be string, %t given '.
                 '[tip: use `serialize` option for serialization]',
                 $value
             );
