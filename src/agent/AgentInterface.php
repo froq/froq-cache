@@ -37,20 +37,20 @@ interface AgentInterface
      * Put an item to cache with given key/value and optionally given TTL.
      *
      * @param  string   $key
-     * @param  any      $value
+     * @param  mixed    $value
      * @param  int|null $ttl
      * @return bool
      */
-    public function set(string $key, $value, int $ttl = null): bool;
+    public function set(string $key, mixed $value, int $ttl = null): bool;
 
     /**
      * Fetch an item from cache with given key or return default param when not exists.
      *
      * @param  string   $key
-     * @param  any|null $default
-     * @return any|null
+     * @param  mixed|null $default
+     * @return mixed|null
      */
-    public function get(string $key, $default = null);
+    public function get(string $key, mixed $default = null): mixed;
 
     /**
      * Drop an item from cache with given key.

@@ -79,7 +79,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, mixed $value, int $ttl = null): bool
     {
         return $this->client->set($key, $value, $ttl ?? $this->ttl);
     }
@@ -87,7 +87,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->client->get($key);
 

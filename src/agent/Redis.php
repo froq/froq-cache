@@ -77,7 +77,7 @@ final class Redis extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, mixed $value, int $ttl = null): bool
     {
         // Redis makes everything string, drops nulls as "" etc,
         // so this will keep retaining original value type.
@@ -89,7 +89,7 @@ final class Redis extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = $default;
 

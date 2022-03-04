@@ -106,7 +106,7 @@ final class File extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, mixed $value, int $ttl = null): bool
     {
         if ($this->has($key, $ttl)) {
             return true;
@@ -138,7 +138,7 @@ final class File extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $default = null, int $ttl = null)
+    public function get(string $key, mixed $default = null, int $ttl = null): mixed
     {
         if (!$this->has($key, $ttl)) {
             return $default;

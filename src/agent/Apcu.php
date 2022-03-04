@@ -53,7 +53,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, mixed $value, int $ttl = null): bool
     {
         return apcu_store($key, $value, $ttl ?? $this->ttl);
     }
@@ -61,7 +61,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = $default;
 

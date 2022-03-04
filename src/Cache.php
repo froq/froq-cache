@@ -104,11 +104,11 @@ final class Cache
      * Write an entry or some entries to cache.
      *
      * @param  string|int|array $key
-     * @param  any|null         $value
+     * @param  mixed|null       $value
      * @param  int|null         $ttl
      * @return bool
      */
-    public function write(string|int|array $key, $value = null, int $ttl = null): bool
+    public function write(string|int|array $key, mixed $value = null, int $ttl = null): bool
     {
         $keys = $this->prepare($key, $single, __function__, func_num_args());
 
@@ -130,11 +130,11 @@ final class Cache
      * Read an entry or some entries from cache.
      *
      * @param  string|int|array $key
-     * @param  any|null         $default
+     * @param  mixed|null       $default
      * @param  int|null         $ttl For only "file" agent here.
-     * @return any|null
+     * @return mixed|null
      */
-    public function read(string|int|array $key, $default = null, int $ttl = null)
+    public function read(string|int|array $key, mixed $default = null, int $ttl = null): mixed
     {
         $keys = $this->prepare($key, $single, __function__);
 

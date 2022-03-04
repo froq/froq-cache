@@ -18,6 +18,7 @@ use Memcached, Redis;
  * @object  froq\cache\agent\AgentTrait
  * @author  Kerem Güneş
  * @since   1.0, 5.0
+ * @internal
  */
 trait AgentTrait
 {
