@@ -19,16 +19,13 @@ namespace froq\cache\agent;
  */
 final class Redis extends AbstractAgent implements AgentInterface
 {
-    /** @see froq\cache\agent\AgentTrait */
     use AgentTrait;
 
     /**
      * Default host & port.
      * @const string, int
-     * @since 4.3
      */
-    public const HOST = 'localhost',
-                 PORT = 6379;
+    public const HOST = 'localhost', PORT = 6379;
 
     /**
      * Constructor.
