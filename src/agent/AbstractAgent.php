@@ -83,18 +83,13 @@ abstract class AbstractAgent
     }
 
     /**
-     * Get/set ttl property.
+     * Get ttl property.
      *
-     * @param  int|null $ttl
      * @return int
      * @since  4.3
      */
-    public final function ttl(int $ttl = null): int
+    public final function ttl(): int
     {
-        if ($ttl !== null) {
-            $this->ttl = $ttl;
-        }
-
         return $this->ttl;
     }
 
