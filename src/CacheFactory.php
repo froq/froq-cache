@@ -163,11 +163,6 @@ final class CacheFactory
 
     /**
      * Prepare a key with given id.
-     *
-     * @param  string $base
-     * @param  string $id
-     * @return string
-     * @since  4.3
      */
     private static function prepareKey(string $base, string $id): string
     {
