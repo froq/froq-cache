@@ -23,74 +23,11 @@ use Memcached, Redis;
 trait AgentTrait
 {
     /** @var Memcached|Redis */
-    private Memcached|Redis $client;
+    public readonly Memcached|Redis $client;
 
     /** @var string */
-    private string $host;
+    public readonly string $host;
 
     /** @var int */
-    private int $port;
-
-    /**
-     * Set client.
-     *
-     * @param  Memcached|Redis $client
-     * @return void
-     */
-    public function setClient(Memcached|Redis $client): void
-    {
-        $this->client = $client;
-    }
-
-    /**
-     * Get client.
-     *
-     * @return Memcached|Redis
-     */
-    public function getClient(): Memcached|Redis|null
-    {
-        return $this->client ?? null;
-    }
-
-    /**
-     * Set host.
-     *
-     * @param  string $host
-     * @return void
-     */
-    public function setHost(string $host): void
-    {
-        $this->host = $host;
-    }
-
-    /**
-     * Get host.
-     *
-     * @return string|null
-     */
-    public function getHost(): string|null
-    {
-        return $this->host ?? null;
-    }
-
-    /**
-     * Set port.
-     *
-     * @param  int $port
-     * @return void
-     */
-    public function setPort(int $port): void
-    {
-        $this->port = $port;
-    }
-
-    /**
-     * Get port.
-     *
-     * @return int|null
-     */
-    public function getPort(): int|null
-    {
-        return $this->port ?? null;
-    }
+    public readonly int $port;
 }

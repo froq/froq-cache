@@ -23,16 +23,16 @@ abstract class AbstractAgent
     public final const TTL = 60; // 1 min.
 
     /** @var string */
-    protected string $id;
+    public readonly string $id;
 
     /** @var string */
-    protected string $name;
+    public readonly string $name;
 
     /** @var bool */
-    protected bool $static;
+    public readonly bool $static;
 
     /** @var int */
-    protected int $ttl;
+    public readonly int $ttl;
 
     /**
      * Constructor.
@@ -47,70 +47,5 @@ abstract class AbstractAgent
         $this->name   = $name;
         $this->static = (bool) ($options['static'] ?? false); // @default
         $this->ttl    = (int) ($options['ttl'] ?? self::TTL); // @default
-    }
-
-    /**
-     * Get id property.
-     *
-     * @return string
-     * @since  4.3
-     */
-    public final function id(): string
-    {
-        return $this->id;
-    }
-
-    /**
-     * Get name property.
-     *
-     * @return string
-     * @since  4.3
-     */
-    public final function name(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get static property.
-     *
-     * @return string
-     * @since  4.3
-     */
-    public final function static(): bool
-    {
-        return $this->static;
-    }
-
-    /**
-     * Get ttl property.
-     *
-     * @return int
-     * @since  4.3
-     */
-    public final function ttl(): int
-    {
-        return $this->ttl;
-    }
-
-    /**
-     * Set ttl.
-     *
-     * @param  int $ttl
-     * @return void
-     */
-    public final function setTtl(int $ttl): void
-    {
-        $this->ttl = $ttl;
-    }
-
-    /**
-     * Get ttl.
-     *
-     * @return int
-     */
-    public final function getTtl(): int
-    {
-        return $this->ttl;
     }
 }

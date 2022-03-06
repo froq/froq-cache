@@ -55,10 +55,8 @@ final class Redis extends AbstractAgent implements AgentInterface
             throw new AgentException('Host or port cannot be empty');
         }
 
-        $client = new \Redis();
-        $client->pconnect($this->host, $this->port);
-
-        $this->setClient($client);
+        $this->client = new \Redis();
+        $this->client->pconnect($this->host, $this->port);
 
         return $this;
     }
