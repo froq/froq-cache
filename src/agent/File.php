@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * File.
- *
  * A file cache wrapper class.
  *
  * @package froq\cache\agent

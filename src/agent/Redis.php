@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Redis.
- *
  * A Redis extension wrapper class.
  *
  * @package froq\cache\agent

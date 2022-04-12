@@ -10,9 +10,7 @@ namespace froq\cache\agent;
 use Memcached, Redis;
 
 /**
- * Agent Trait.
- *
- * Used by Memcached & Redis agents only to have native client properties and methods.
+ * A trait, provides native client properties and used by Memcached & Redis agents only.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentTrait

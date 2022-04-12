@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Apcu.
- *
  * An APCu extension wrapper class.
  *
  * @package froq\cache\agent

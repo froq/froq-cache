@@ -10,8 +10,6 @@ namespace froq\cache;
 use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
 
 /**
- * Cache Factory.
- *
  * A factory class available for creating/storing cache or cache agent objects.
  *
  * @package froq\cache

@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Agent Interface.
+ * An interface implemented by agent classes.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentInterface

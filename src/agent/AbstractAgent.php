@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace froq\cache\agent;
 
 /**
- * Abstract Agent.
- *
  * An abstract class that extended by agent classes.
  *
  * @package froq\cache\agent
