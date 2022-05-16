@@ -26,6 +26,15 @@ final class Memcached extends AbstractAgent implements AgentInterface
     public const HOST = 'localhost', PORT = 11211;
 
     /**
+     * Default persistent key.
+     * @const string
+     */
+    public const KEY = 'localhost';
+
+    /** @var string */
+    public readonly string $key;
+
+    /**
      * Constructor.
      *
      * @param  string     $id
@@ -40,6 +49,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
 
         $this->host = $options['host'] ?? self::HOST;
         $this->port = $options['port'] ?? self::PORT;
+        $this->key  = $options['key']  ?? self::KEY;
 
         parent::__construct($id, 'memcached', $options);
     }
@@ -53,7 +63,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
             throw new AgentException('Host or port cannot be empty');
         }
 
-        $this->client = new \Memcached();
+        $this->client = new \Memcached($this->key);
         $this->client->addServer($this->host, $this->port);
 
         return $this;
