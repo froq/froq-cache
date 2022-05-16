@@ -76,7 +76,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
     {
         $this->client->get($key);
 
-        return $this->client->getResultCode() === \Memcached::RES_SUCCESS;
+        return $this->client->getResultCode() !== \Memcached::RES_NOTFOUND;
     }
 
     /**
