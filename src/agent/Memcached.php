@@ -7,11 +7,8 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
-use Memcached as _Memcached;
-
 /**
- * Memcached.
+ * A Memcached extension wrapper class.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\Memcached
@@ -20,16 +17,22 @@ use Memcached as _Memcached;
  */
 final class Memcached extends AbstractAgent implements AgentInterface
 {
-    /** @see froq\cache\agent\AgentTrait */
     use AgentTrait;
 
     /**
      * Default host & port.
      * @const string, int
-     * @since 4.3
      */
-    public const HOST = 'localhost',
-                 PORT = 11211;
+    public const HOST = 'localhost', PORT = 11211;
+
+    /**
+     * Default persistent key.
+     * @const string
+     */
+    public const KEY = 'localhost';
+
+    /** @var string */
+    public readonly string $key;
 
     /**
      * Constructor.
@@ -40,12 +43,15 @@ final class Memcached extends AbstractAgent implements AgentInterface
      */
     public function __construct(string $id, array $options = null)
     {
-        extension_loaded('memcached') || throw new AgentException('Memcached extension not found');
+        if (!extension_loaded('memcached')) {
+            throw new AgentException('Memcached extension not loaded');
+        }
 
         $this->host = $options['host'] ?? self::HOST;
         $this->port = $options['port'] ?? self::PORT;
+        $this->key  = $options['key']  ?? self::KEY;
 
-        parent::__construct($id, AgentInterface::MEMCACHED, $options);
+        parent::__construct($id, 'memcached', $options);
     }
 
     /**
@@ -53,12 +59,12 @@ final class Memcached extends AbstractAgent implements AgentInterface
      */
     public function init(): AgentInterface
     {
-        ($this->host && $this->port) || throw new AgentException('Host or port can not be empty');
+        if (!$this->host || !$this->port) {
+            throw new AgentException('Host or port cannot be empty');
+        }
 
-        $client = new _Memcached();
-        $client->addServer($this->host, $this->port);
-
-        $this->setClient($client);
+        $this->client = new \Memcached($this->key);
+        $this->client->addServer($this->host, $this->port);
 
         return $this;
     }
@@ -70,13 +76,13 @@ final class Memcached extends AbstractAgent implements AgentInterface
     {
         $this->client->get($key);
 
-        return $this->client->getResultCode() === _Memcached::RES_SUCCESS;
+        return $this->client->getResultCode() !== \Memcached::RES_NOTFOUND;
     }
 
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, mixed $value, int $ttl = null): bool
     {
         return $this->client->set($key, $value, $ttl ?? $this->ttl);
     }
@@ -84,11 +90,11 @@ final class Memcached extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->client->get($key);
 
-        if ($this->client->getResultCode() === _Memcached::RES_NOTFOUND) {
+        if ($this->client->getResultCode() === \Memcached::RES_NOTFOUND) {
             $value = $default;
         }
 

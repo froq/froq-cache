@@ -7,15 +7,11 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\CacheException;
-
 /**
- * Agent Exception.
- *
  * @package froq\cache\agent
  * @object  froq\cache\agent\AgentException
  * @author  Kerem Güneş
  * @since   4.0
  */
-class AgentException extends CacheException
+class AgentException extends \froq\cache\CacheException
 {}

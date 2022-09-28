@@ -7,10 +7,8 @@ declare(strict_types=1);
 
 namespace froq\cache\agent;
 
-use froq\cache\agent\{AbstractAgent, AgentInterface, AgentException};
-
 /**
- * Apcu.
+ * An APCu extension wrapper class.
  *
  * @package froq\cache\agent
  * @object  froq\cache\agent\Apcu
@@ -27,9 +25,11 @@ final class Apcu extends AbstractAgent implements AgentInterface
      */
     public function __construct(string $id, array $options = null)
     {
-        extension_loaded('apcu') || throw new AgentException('APCu extension not found');
+        if (!extension_loaded('apcu')) {
+            throw new AgentException('APCu extension not loaded');
+        }
 
-        parent::__construct($id, AgentInterface::APCU, $options);
+        parent::__construct($id, 'apcu', $options);
     }
 
     /**
@@ -51,7 +51,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, mixed $value, int $ttl = null): bool
     {
         return apcu_store($key, $value, $ttl ?? $this->ttl);
     }
@@ -59,7 +59,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $value = $default;
 
