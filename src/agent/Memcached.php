@@ -41,7 +41,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
      * @param  array|null $options
      * @throws froq\cache\agent\AgentException
      */
-    public function __construct(string $id, array $options = null)
+    public function __construct(string $id = '', array $options = null)
     {
         if (!extension_loaded('memcached')) {
             throw new AgentException('Memcached extension not loaded');

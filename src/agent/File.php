@@ -34,14 +34,14 @@ final class File extends AbstractAgent implements AgentInterface
      * @param string     $id
      * @param array|null $options
      */
-    public function __construct(string $id, array $options = null)
+    public function __construct(string $id = '', array $options = null)
     {
         parent::__construct($id, 'file', $options);
 
         if ($options) {
             // Filter self options only.
-            $options = array_filter($options,
-                fn($key) => array_key_exists($key, $this->options), 2);
+            $options = array_filter_keys($options,
+                fn($key) => array_key_exists($key, $this->options));
 
             $this->options = array_merge($this->options, $options);
         }

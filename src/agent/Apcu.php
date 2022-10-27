@@ -23,7 +23,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
      * @param  array|null $options
      * @throws froq\cache\agent\AgentException
      */
-    public function __construct(string $id, array $options = null)
+    public function __construct(string $id = '', array $options = null)
     {
         if (!extension_loaded('apcu')) {
             throw new AgentException('APCu extension not loaded');
