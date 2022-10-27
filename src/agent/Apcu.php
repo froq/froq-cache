@@ -86,6 +86,6 @@ final class Apcu extends AbstractAgent implements AgentInterface
      */
     public function clear(): bool
     {
-        return apcu_clear_cache('user');
+        return apcu_clear_cache();
     }
 }
