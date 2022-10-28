@@ -84,8 +84,17 @@ final class Apcu extends AbstractAgent implements AgentInterface
     /**
      * @inheritDoc froq\cache\agent\AgentInterface
      */
-    public function clear(): bool
+    public function clear(string $prefix = null): bool
     {
+        if ($prefix) {
+            $result = false;
+            foreach (new \APCuIterator('~^' . $prefix . '~') as $item) {
+                $result = apcu_delete($item['key']);
+            }
+
+            return (bool) $result;
+        }
+
         return apcu_clear_cache();
     }
 }
