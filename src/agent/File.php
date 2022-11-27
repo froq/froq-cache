@@ -54,8 +54,9 @@ final class File extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         $directory = (string) $this->options['directory'];
-        if (trim($directory) == '') {
-            throw new AgentException('Option `directory` cannot be empty');
+
+        if (trim($directory) === '') {
+            throw new AgentException('Option "directory" cannot be empty');
         }
 
         if (!dirmake($directory)) {
@@ -290,7 +291,7 @@ final class File extends AbstractAgent implements AgentInterface
         return match ($this->options['serialize']) {
             'php'   => serialize($value),
             'json'  => json_encode($value, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRESERVE_ZERO_FRACTION),
-            default => throw new AgentException('Invalid serialize option `%s` [valids: php, json]',
+            default => throw new AgentException('Invalid serialize option %q [valids: php, json]',
                 $this->options['serialize'])
         };
     }
@@ -303,7 +304,7 @@ final class File extends AbstractAgent implements AgentInterface
         return match ($this->options['serialize']) {
             'php'   => unserialize($value),
             'json'  => json_decode($value),
-            default => throw new AgentException('Invalid serialize option `%s` [valids: php, json]',
+            default => throw new AgentException('Invalid serialize option %q [valids: php, json]',
                 $this->options['serialize'])
         };
     }

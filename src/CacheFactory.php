@@ -83,7 +83,7 @@ final class CacheFactory
         }
 
         throw new CacheException(
-            'No cache initiated with id `%s`, call %s::init() to initiate first',
+            'No cache initiated with id %q, call %s::init() to initiate first',
             [$id, self::class]
         );
     }
@@ -100,7 +100,7 @@ final class CacheFactory
     public static function initAgent(string $id, array $options): AgentInterface
     {
         if (empty($options['agent'])) {
-            throw new CacheException('Option `agent` is empty');
+            throw new CacheException('Option "agent" is empty');
         }
 
         $options['static'] ??= true; // @default
@@ -120,7 +120,7 @@ final class CacheFactory
             self::AGENT_MEMCACHED => new Memcached($id, $options),
 
             default => throw new CacheException(
-                'Unimplemented agent `%s`', $options['agent']
+                'Unimplemented agent %q', $options['agent']
             ),
         };
 
@@ -153,7 +153,7 @@ final class CacheFactory
         }
 
         throw new CacheException(
-            'No cache agent initiated with id `%s` as static, call %s::initAgent() '.
+            'No cache agent initiated with id %q as static, call %s::initAgent() '.
             'with static=true option to initiate first',
             [$id, self::class]
         );
