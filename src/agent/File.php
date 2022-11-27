@@ -119,7 +119,7 @@ final class File extends AbstractAgent implements AgentInterface
         } else {
             is_string($value) || throw new AgentException(
                 'Argument $value must be string, %t given '.
-                '[tip: use `serialize` option for serialization]',
+                '[tip: use "serialize" option for serialization]',
                 $value
             );
         }
