@@ -88,6 +88,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     {
         if ($prefix) {
             $result = false;
+
             foreach (new \APCuIterator('~^' . $prefix . '~') as $item) {
                 $result = apcu_delete($item['key']);
             }

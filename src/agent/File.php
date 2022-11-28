@@ -59,9 +59,8 @@ final class File extends AbstractAgent implements AgentInterface
             throw new AgentException('Option "directory" cannot be empty');
         }
 
-        if (!dirmake($directory)) {
-            throw new AgentException('Cannot create cache directory %S [error: %s]',
-                [$directory, '@error']);
+        if (!@dirmake($directory)) {
+            throw new AgentException('Cannot create cache directory %S [error: @error]', $directory);
         }
 
         return $this;
