@@ -196,7 +196,7 @@ final class File extends AbstractAgent implements AgentInterface
             clearstatcache();
         } catch (\Error) {
             // Oh, my lad..
-            $rmrf = function ($root) use (&$rmrf, $extension) {
+            $rmrf = function (string $root) use (&$rmrf, $extension): void {
                 if ($paths = glob($root . '/*')) {
                     foreach ($paths as $path) {
                         if (is_dir($path)) {
