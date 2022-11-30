@@ -17,7 +17,7 @@ use froq\cache\agent\AgentInterface;
  * @author  Kerem Güneş
  * @since   4.1
  */
-final class Cache
+class Cache
 {
     /** @var string */
     public readonly string $id;

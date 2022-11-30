@@ -17,7 +17,7 @@ use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
  * @author  Kerem Güneş
  * @since   4.1, 4.3
  */
-final class CacheFactory
+class CacheFactory
 {
     /** @const string */
     public const AGENT_FILE      = 'file',

@@ -15,7 +15,7 @@ namespace froq\cache\agent;
  * @author  Kerem Güneş
  * @since   1.0
  */
-final class Memcached extends AbstractAgent implements AgentInterface
+class Memcached extends AbstractAgent implements AgentInterface
 {
     use AgentTrait;
 

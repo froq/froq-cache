@@ -15,7 +15,7 @@ namespace froq\cache\agent;
  * @author  Kerem Güneş
  * @since   1.0
  */
-final class File extends AbstractAgent implements AgentInterface
+class File extends AbstractAgent implements AgentInterface
 {
     /** @var string */
     private string $file;

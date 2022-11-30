@@ -15,7 +15,7 @@ namespace froq\cache\agent;
  * @author  Kerem Güneş
  * @since   1.0
  */
-final class Apcu extends AbstractAgent implements AgentInterface
+class Apcu extends AbstractAgent implements AgentInterface
 {
     /**
      * Constructor.
