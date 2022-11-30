@@ -1,26 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache\agent;
 
 /**
  * A file cache wrapper class.
  *
  * @package froq\cache\agent
- * @object  froq\cache\agent\File
+ * @class   froq\cache\agent\File
  * @author  Kerem Güneş
  * @since   1.0
  */
 class File extends AbstractAgent implements AgentInterface
 {
-    /** @var string */
+    /** Prepared cache file at runtime. */
     private string $file;
 
-    /** @var array */
+    /** Options. */
     private array $options = [
         'directory'     => null,  // Must be given in constructor.
         'serialize'     => 'php', // Only 'php' or 'json'.
@@ -80,7 +78,7 @@ class File extends AbstractAgent implements AgentInterface
         // Check corruption, level=6 (https://stackoverflow.com/a/9050274/362780).
         if ($this->options['compress']
             && $this->options['compressCheck']
-            && file_get_contents($file, length: 2) != "\x78\x9C") {
+            && file_get_contents($file, length: 2) !== "\x78\x9C") {
             $this->deleteFile($file);
             return false;
         }
@@ -180,7 +178,7 @@ class File extends AbstractAgent implements AgentInterface
     public function clear(string $subDirectory = ''): bool
     {
         $directory = $this->options['directory'];
-        if ($subDirectory != '') {
+        if ($subDirectory !== '') {
             $directory .= '/' . trim($subDirectory, '/');
         }
 

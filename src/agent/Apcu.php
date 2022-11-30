@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache\agent;
 
 /**
  * An APCu extension wrapper class.
  *
  * @package froq\cache\agent
- * @object  froq\cache\agent\Apcu
+ * @class   froq\cache\agent\Apcu
  * @author  Kerem Güneş
  * @since   1.0
  */

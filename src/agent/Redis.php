@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache\agent;
 
 /**
  * A Redis extension wrapper class.
  *
  * @package froq\cache\agent
- * @object  froq\cache\agent\Redis
+ * @class   froq\cache\agent\Redis
  * @author  Kerem Güneş
  * @since   1.0
  */
@@ -19,10 +17,7 @@ class Redis extends AbstractAgent implements AgentInterface
 {
     use AgentTrait;
 
-    /**
-     * Default host & port.
-     * @const string, int
-     */
+    /** Default host & port. */
     public const HOST = 'localhost', PORT = 6379;
 
     /**
