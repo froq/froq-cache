@@ -17,7 +17,7 @@ namespace froq\cache\agent;
  */
 abstract class AbstractAgent
 {
-    /** @const int */
+    /** Default TTL value. */
     public final const TTL = 60; // 1 min.
 
     /** @var string */
