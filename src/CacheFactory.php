@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache;
 
 use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
@@ -13,19 +11,19 @@ use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
  * A factory class available for creating/storing cache or cache agent objects.
  *
  * @package froq\cache
- * @object  froq\cache\CacheFactory
+ * @class   froq\cache\CacheFactory
  * @author  Kerem Güneş
  * @since   4.1, 4.3
  */
 class CacheFactory
 {
-    /** @const string */
+    /** Agent types. */
     public const AGENT_FILE      = 'file',
                  AGENT_APCU      = 'apcu',
                  AGENT_REDIS     = 'redis',
                  AGENT_MEMCACHED = 'memcached';
 
-    /** @var array<string, froq\cache\Cache|froq\cache\agent\AgentInterface> */
+    /** Agent instances. */
     private static array $instances = [];
 
     /**
