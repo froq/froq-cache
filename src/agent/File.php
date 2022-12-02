@@ -54,11 +54,11 @@ class File extends AbstractAgent implements AgentInterface
         $directory = (string) $this->options['directory'];
 
         if (trim($directory) === '') {
-            throw new AgentException('Option "directory" cannot be empty');
+            throw AgentException::forEmptyDirectoryOption();
         }
 
         if (!@dirmake($directory)) {
-            throw new AgentException('Cannot create cache directory %S [error: @error]', $directory);
+            throw AgentException::forMakeDirectoryError($directory);
         }
 
         return $this;
@@ -288,8 +288,7 @@ class File extends AbstractAgent implements AgentInterface
         return match ($this->options['serialize']) {
             'php'   => serialize($value),
             'json'  => json_encode($value, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRESERVE_ZERO_FRACTION),
-            default => throw new AgentException('Invalid serialize option %q [valids: php, json]',
-                $this->options['serialize'])
+            default => throw AgentException::forInvalidSerializeOption($this->options['serialize'])
         };
     }
 
@@ -301,8 +300,7 @@ class File extends AbstractAgent implements AgentInterface
         return match ($this->options['serialize']) {
             'php'   => unserialize($value),
             'json'  => json_decode($value),
-            default => throw new AgentException('Invalid serialize option %q [valids: php, json]',
-                $this->options['serialize'])
+            default => throw AgentException::forInvalidSerializeOption($this->options['serialize'])
         };
     }
 }

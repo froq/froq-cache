@@ -30,7 +30,7 @@ class Redis extends AbstractAgent implements AgentInterface
     public function __construct(string $id = '', array $options = null)
     {
         if (!extension_loaded('redis')) {
-            throw new AgentException('Redis extension not loaded');
+            throw AgentException::forNotFoundExtension('redis');
         }
 
         $this->host = $options['host'] ?? self::HOST;
@@ -45,7 +45,7 @@ class Redis extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         if (!$this->host || !$this->port) {
-            throw new AgentException('Host or port cannot be empty');
+            throw AgentException::forEmptyHostOrPort();
         }
 
         $this->client = new \Redis();
