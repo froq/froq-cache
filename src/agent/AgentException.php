@@ -30,7 +30,7 @@ class AgentException extends \froq\cache\CacheException
 
     public static function forMakeDirectoryError(string $directory): static
     {
-        return new static('Cannot create cache directory %S [error: @error]', $directory);
+        return new static('Cannot create cache directory %S [error: @error]', $directory, extract: true);
     }
 
     public static function forNoFilePreparedYet(): static
@@ -40,10 +40,8 @@ class AgentException extends \froq\cache\CacheException
 
     public static function forInvalidArgumentValue(mixed $value): static
     {
-        return new static(
-            'Argument $value must be string, %t given [tip: use "serialize" option for serialization]',
-            $value
-        );
+        return new static('Argument $value must be string, %t given [tip: use "serialize" option for serialization]',
+            $value);
     }
 
     public static function forInvalidSerializeOption(mixed $option): static
