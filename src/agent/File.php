@@ -113,12 +113,8 @@ class File extends AbstractAgent implements AgentInterface
 
         if ($this->options['serialize']) {
             $value = $this->serialize($value);
-        } else {
-            is_string($value) || throw new AgentException(
-                'Argument $value must be string, %t given '.
-                '[tip: use "serialize" option for serialization]',
-                $value
-            );
+        } elseif (!is_string($value)) {
+            throw AgentException::forInvalidArgumentValue($value);
         }
 
         if ($this->options['compress']) {
@@ -257,9 +253,7 @@ class File extends AbstractAgent implements AgentInterface
      */
     public function file(): string
     {
-        return $this->file ?? throw new AgentException(
-            'No file yet, try after calling set(), get() or has()'
-        );
+        return $this->file ?? throw AgentException::forNoFilePreparedYet();
     }
 
     /**
