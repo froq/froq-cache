@@ -39,9 +39,9 @@ class Cache
             $this->agent = $agent;
         } else {
             if (empty($options)) {
-                throw new CacheException('No agent options given');
+                throw CacheException::forEmptyAgentOptions();
             } elseif (empty($options['id'] ??= $id)) {
-                throw new CacheException('No agent id given in options');
+                throw CacheException::forEmptyAgentIdOption();
             }
 
             $this->agent = CacheFactory::initAgent($options['id'], $options);
@@ -95,9 +95,8 @@ class Cache
         } else {
             // Sadly $ttl is overriding this hedge..
             if (func_num_args() === 1) {
-                throw new CacheException('Argument $value is not given');
+                throw CacheException::forMissingValueArgument();
             }
-
             $ret = $this->agent->set((string) $key, $value, $ttl);
         }
 

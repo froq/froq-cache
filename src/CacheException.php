@@ -12,4 +12,19 @@ namespace froq\cache;
  * @since   1.0
  */
 class CacheException extends \froq\common\Exception
-{}
+{
+    public static function forEmptyAgentOptions(): static
+    {
+        return new static('No agent options given');
+    }
+
+    public static function forEmptyAgentIdOption(): static
+    {
+        return new static('No agent id given in options');
+    }
+
+    public static function forMissingValueArgument(): static
+    {
+        return new static('Argument $value is not given');
+    }
+}
