@@ -1,21 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache\agent;
 
 /**
  * An APCu extension wrapper class.
  *
  * @package froq\cache\agent
- * @object  froq\cache\agent\Apcu
+ * @class   froq\cache\agent\Apcu
  * @author  Kerem Güneş
  * @since   1.0
  */
-final class Apcu extends AbstractAgent implements AgentInterface
+class Apcu extends AbstractAgent implements AgentInterface
 {
     /**
      * Constructor.
@@ -26,7 +24,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     public function __construct(string $id = '', array $options = null)
     {
         if (!extension_loaded('apcu')) {
-            throw new AgentException('APCu extension not loaded');
+            throw AgentException::forNotFoundExtension('apcu');
         }
 
         parent::__construct($id, 'apcu', $options);
@@ -88,6 +86,7 @@ final class Apcu extends AbstractAgent implements AgentInterface
     {
         if ($prefix) {
             $result = false;
+
             foreach (new \APCuIterator('~^' . $prefix . '~') as $item) {
                 $result = apcu_delete($item['key']);
             }

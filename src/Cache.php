@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache;
 
 use froq\cache\agent\AgentInterface;
@@ -13,16 +11,16 @@ use froq\cache\agent\AgentInterface;
  * A simple cache class for read/write operations and also removals and checks.
  *
  * @package froq\cache
- * @object  froq\cache\Cache
+ * @class   froq\cache\Cache
  * @author  Kerem Güneş
  * @since   4.1
  */
-final class Cache
+class Cache
 {
-    /** @var string */
+    /** Identifier. */
     public readonly string $id;
 
-    /** @var froq\cache\agent\AgentInterface */
+    /** Agent instance. */
     public readonly AgentInterface $agent;
 
     /**
@@ -41,9 +39,9 @@ final class Cache
             $this->agent = $agent;
         } else {
             if (empty($options)) {
-                throw new CacheException('No agent options given');
+                throw CacheException::forEmptyAgentOptions();
             } elseif (empty($options['id'] ??= $id)) {
-                throw new CacheException('No agent id given in options');
+                throw CacheException::forEmptyAgentIdOption();
             }
 
             $this->agent = CacheFactory::initAgent($options['id'], $options);
@@ -96,10 +94,9 @@ final class Cache
             }
         } else {
             // Sadly $ttl is overriding this hedge..
-            if (func_num_args() == 1) {
-                throw new CacheException('Argument $value is not given');
+            if (func_num_args() === 1) {
+                throw CacheException::forMissingValueArgument();
             }
-
             $ret = $this->agent->set((string) $key, $value, $ttl);
         }
 

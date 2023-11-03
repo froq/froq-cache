@@ -1,26 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache\agent;
 
 /**
  * A file cache wrapper class.
  *
  * @package froq\cache\agent
- * @object  froq\cache\agent\File
+ * @class   froq\cache\agent\File
  * @author  Kerem Güneş
  * @since   1.0
  */
-final class File extends AbstractAgent implements AgentInterface
+class File extends AbstractAgent implements AgentInterface
 {
-    /** @var string */
+    /** Prepared cache file at runtime. */
     private string $file;
 
-    /** @var array */
+    /** Options. */
     private array $options = [
         'directory'     => null,  // Must be given in constructor.
         'serialize'     => 'php', // Only 'php' or 'json'.
@@ -40,8 +38,9 @@ final class File extends AbstractAgent implements AgentInterface
 
         if ($options) {
             // Filter self options only.
-            $options = array_filter_keys($options,
-                fn($key) => array_key_exists($key, $this->options));
+            $options = array_filter_keys($options, fn(int|string $key): bool => (
+                array_key_exists($key, $this->options)
+            ));
 
             $this->options = array_merge($this->options, $options);
         }
@@ -53,13 +52,13 @@ final class File extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         $directory = (string) $this->options['directory'];
-        if (trim($directory) == '') {
-            throw new AgentException('Option `directory` cannot be empty');
+
+        if (trim($directory) === '') {
+            throw AgentException::forEmptyDirectoryOption();
         }
 
-        if (!dirmake($directory)) {
-            throw new AgentException('Cannot create cache directory %S [error: %s]',
-                [$directory, '@error']);
+        if (!@dirmake($directory)) {
+            throw AgentException::forMakeDirectoryError($directory);
         }
 
         return $this;
@@ -79,7 +78,7 @@ final class File extends AbstractAgent implements AgentInterface
         // Check corruption, level=6 (https://stackoverflow.com/a/9050274/362780).
         if ($this->options['compress']
             && $this->options['compressCheck']
-            && file_get_contents($file, length: 2) != "\x78\x9C") {
+            && file_get_contents($file, length: 2) !== "\x78\x9C") {
             $this->deleteFile($file);
             return false;
         }
@@ -114,12 +113,8 @@ final class File extends AbstractAgent implements AgentInterface
 
         if ($this->options['serialize']) {
             $value = $this->serialize($value);
-        } else {
-            is_string($value) || throw new AgentException(
-                'Argument $value must be string, %t given '.
-                '[tip: use `serialize` option for serialization]',
-                $value
-            );
+        } elseif (!is_string($value)) {
+            throw AgentException::forInvalidArgumentValue($value);
         }
 
         if ($this->options['compress']) {
@@ -179,7 +174,7 @@ final class File extends AbstractAgent implements AgentInterface
     public function clear(string $subDirectory = ''): bool
     {
         $directory = $this->options['directory'];
-        if ($subDirectory != '') {
+        if ($subDirectory !== '') {
             $directory .= '/' . trim($subDirectory, '/');
         }
 
@@ -195,7 +190,7 @@ final class File extends AbstractAgent implements AgentInterface
             clearstatcache();
         } catch (\Error) {
             // Oh, my lad..
-            $rmrf = function ($root) use (&$rmrf, $extension) {
+            $rmrf = function (string $root) use (&$rmrf, $extension): void {
                 if ($paths = glob($root . '/*')) {
                     foreach ($paths as $path) {
                         if (is_dir($path)) {
@@ -258,9 +253,7 @@ final class File extends AbstractAgent implements AgentInterface
      */
     public function file(): string
     {
-        return $this->file ?? throw new AgentException(
-            'No file yet, try after calling set(), get() or has()'
-        );
+        return $this->file ?? throw AgentException::forNoFilePreparedYet();
     }
 
     /**
@@ -289,8 +282,7 @@ final class File extends AbstractAgent implements AgentInterface
         return match ($this->options['serialize']) {
             'php'   => serialize($value),
             'json'  => json_encode($value, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRESERVE_ZERO_FRACTION),
-            default => throw new AgentException('Invalid serialize option `%s` [valids: php, json]',
-                $this->options['serialize'])
+            default => throw AgentException::forInvalidSerializeOption($this->options['serialize'])
         };
     }
 
@@ -302,8 +294,7 @@ final class File extends AbstractAgent implements AgentInterface
         return match ($this->options['serialize']) {
             'php'   => unserialize($value),
             'json'  => json_decode($value),
-            default => throw new AgentException('Invalid serialize option `%s` [valids: php, json]',
-                $this->options['serialize'])
+            default => throw AgentException::forInvalidSerializeOption($this->options['serialize'])
         };
     }
 }

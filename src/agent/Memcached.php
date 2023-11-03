@@ -1,37 +1,29 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2015 · Kerem Güneş
  * Apache License 2.0 · http://github.com/froq/froq-cache
  */
-declare(strict_types=1);
-
 namespace froq\cache\agent;
 
 /**
  * A Memcached extension wrapper class.
  *
  * @package froq\cache\agent
- * @object  froq\cache\agent\Memcached
+ * @class   froq\cache\agent\Memcached
  * @author  Kerem Güneş
  * @since   1.0
  */
-final class Memcached extends AbstractAgent implements AgentInterface
+class Memcached extends AbstractAgent implements AgentInterface
 {
     use AgentTrait;
 
-    /**
-     * Default host & port.
-     * @const string, int
-     */
+    /** Default host & port. */
     public const HOST = 'localhost', PORT = 11211;
 
-    /**
-     * Default persistent key.
-     * @const string
-     */
+    /** Default persistent key. */
     public const KEY = 'localhost';
 
-    /** @var string */
+    /** Persistent key. */
     public readonly string $key;
 
     /**
@@ -44,7 +36,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
     public function __construct(string $id = '', array $options = null)
     {
         if (!extension_loaded('memcached')) {
-            throw new AgentException('Memcached extension not loaded');
+            throw AgentException::forNotFoundExtension('memcached');
         }
 
         $this->host = $options['host'] ?? self::HOST;
@@ -60,7 +52,7 @@ final class Memcached extends AbstractAgent implements AgentInterface
     public function init(): AgentInterface
     {
         if (!$this->host || !$this->port) {
-            throw new AgentException('Host or port cannot be empty');
+            throw AgentException::forEmptyHostOrPort();
         }
 
         $this->client = new \Memcached($this->key);
