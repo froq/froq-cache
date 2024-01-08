@@ -53,11 +53,9 @@ class CacheFactory
             $options['id'] ??= $id;
 
             // Try to get existing agent in agent instances.
-            try {
-                self::$instances[$key] = new Cache($id, $options, self::getAgentInstance($id));
-            } catch (CacheException) {
-                self::$instances[$key] = new Cache($id, $options);
-            }
+            $agent = self::getAgentInstance($id, throw: false);
+
+            self::$instances[$key] = new Cache($id, $options, $agent);
         }
 
         return self::$instances[$key];
@@ -68,11 +66,12 @@ class CacheFactory
      * with given id.
      *
      * @param  string $id
+     * @param  bool   $throw
      * @return froq\cache\Cache
      * @throws froq\cache\CacheFactoryException
      * @since  4.3
      */
-    public static function getInstance(string $id): Cache
+    public static function getInstance(string $id, bool $throw = true): Cache|null
     {
         $key = self::prepareKey('cache', $id);
 
@@ -80,7 +79,9 @@ class CacheFactory
             return self::$instances[$key];
         }
 
-        throw CacheFactoryException::forNoCacheWithId($id);
+        $throw && throw CacheFactoryException::forNoCacheWithId($id);
+
+        return null;
     }
 
     /**
@@ -134,11 +135,12 @@ class CacheFactory
      * instance found with given id.
      *
      * @param  string $id
-     * @return froq\cache\agent\AgentInterface
+     * @param  bool   $throw
+     * @return froq\cache\agent\AgentInterface|null
      * @throws froq\cache\CacheFactoryException
      * @since  4.3
      */
-    public static function getAgentInstance(string $id): AgentInterface
+    public static function getAgentInstance(string $id, bool $throw = true): AgentInterface|null
     {
         $key = self::prepareKey('agent', $id);
 
@@ -146,7 +148,9 @@ class CacheFactory
             return self::$instances[$key];
         }
 
-        throw CacheFactoryException::forNoCacheAgentWithId($id);
+        $throw && throw CacheFactoryException::forNoCacheAgentWithId($id);
+
+        return null;
     }
 
     /**

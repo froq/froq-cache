@@ -28,15 +28,15 @@ class Cache
      *
      * @param  string                               $id
      * @param  array                                $options
-     * @param  froq\cache\agent\AgentInterface|null $agent @internal
+     * @param  froq\cache\agent\AgentInterface|null $_agent @internal
      * @throws froq\cache\CacheException
      */
-    public function __construct(string $id, array $options, AgentInterface $agent = null)
+    public function __construct(string $id, array $options, AgentInterface $_agent = null)
     {
         $this->id = $id;
 
-        if ($agent) {
-            $this->agent = $agent;
+        if ($_agent) {
+            $this->agent = $_agent;
         } else {
             if (empty($options)) {
                 throw CacheException::forEmptyAgentOptions();

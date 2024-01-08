@@ -91,6 +91,7 @@ class Apcu extends AbstractAgent implements AgentInterface
                 $result = apcu_delete($item['key']);
             }
 
+            // Bool cast, so key can be an array.
             return (bool) $result;
         }
 
