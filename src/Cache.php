@@ -8,7 +8,7 @@ namespace froq\cache;
 use froq\cache\agent\AgentInterface;
 
 /**
- * A simple cache class for read/write operations and also removals and checks.
+ * A cache class for read/write operations and also removals and checks.
  *
  * @package froq\cache
  * @class   froq\cache\Cache

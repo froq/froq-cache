@@ -8,7 +8,7 @@ namespace froq\cache;
 use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
 
 /**
- * A factory class available for creating/storing cache or cache agent objects.
+ * A factory class for creating/storing cache or cache agent objects.
  *
  * @package froq\cache
  * @class   froq\cache\CacheFactory
@@ -17,12 +17,6 @@ use froq\cache\agent\{AgentInterface, File, Apcu, Redis, Memcached};
  */
 class CacheFactory
 {
-    /** Agent types. */
-    public const AGENT_FILE      = 'file',
-                 AGENT_APCU      = 'apcu',
-                 AGENT_REDIS     = 'redis',
-                 AGENT_MEMCACHED = 'memcached';
-
     /** Agent instances. */
     private static array $instances = [];
 
@@ -110,10 +104,10 @@ class CacheFactory
         }
 
         $agent = match ($options['agent']) {
-            self::AGENT_FILE      => new File($id, $options),
-            self::AGENT_APCU      => new Apcu($id, $options),
-            self::AGENT_REDIS     => new Redis($id, $options),
-            self::AGENT_MEMCACHED => new Memcached($id, $options),
+            CacheAgent::FILE      => new File($id, $options),
+            CacheAgent::APCU      => new Apcu($id, $options),
+            CacheAgent::REDIS     => new Redis($id, $options),
+            CacheAgent::MEMCACHED => new Memcached($id, $options),
 
             // Unimplemented agent option.
             default => throw CacheFactoryException::forUnimplementedAgentOption($options['agent'])
