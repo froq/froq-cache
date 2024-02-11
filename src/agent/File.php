@@ -18,7 +18,7 @@ class File extends AbstractAgent implements AgentInterface
     /** Prepared cache file at runtime. */
     private string $file;
 
-    /** Options. */
+    /** Options with defaults. */
     private array $options = [
         'directory'     => null,  // Must be given in constructor.
         'serialize'     => 'php', // Only 'php' or 'json'.
@@ -83,8 +83,7 @@ class File extends AbstractAgent implements AgentInterface
             return false;
         }
 
-        $time = filemtime($file);
-        if (!$time) {
+        if (!$time = filemtime($file)) {
             $this->deleteFile($file);
             return false;
         }
@@ -165,7 +164,9 @@ class File extends AbstractAgent implements AgentInterface
      */
     public function delete(string $key): bool
     {
-        return $this->deleteFile($this->prepareFile($key));
+        $file = $this->prepareFile($key);
+
+        return $this->deleteFile($file);
     }
 
     /**
@@ -185,21 +186,19 @@ class File extends AbstractAgent implements AgentInterface
             exec(
                 'find ' . escapeshellarg($directory) . ' '  .
                 '-name *' . escapeshellarg($extension) . ' '  .
-                '-print0 | xargs -0 rm 2> /dev/null'
+                '-print0 | xargs -0 rm 2>/dev/null'
             );
+
             clearstatcache();
         } catch (\Error) {
             // Oh, my lad..
             $rmrf = function (string $root) use (&$rmrf, $extension): void {
-                if ($paths = glob($root . '/*')) {
-                    foreach ($paths as $path) {
-                        if (is_dir($path)) {
-                            $rmrf($path . '/*');
-                            rmdir($path);
-                        } elseif (is_file($path)) {
-                            str_ends_with($path, $extension)
-                            && unlink($path);
-                        }
+                foreach (glob($root . '/*', GLOB_NOSORT) as $path) {
+                    if (is_file($path) && strsfx($path, $extension)) {
+                        unlink($path);
+                    } elseif (is_dir($path)) {
+                        $rmrf($path . '/*');
+                        rmdir($path);
                     }
                 }
             };
@@ -280,8 +279,7 @@ class File extends AbstractAgent implements AgentInterface
     private function serialize(mixed $value): string
     {
         return match ($this->options['serialize']) {
-            'php'   => serialize($value),
-            'json'  => json_encode($value, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRESERVE_ZERO_FRACTION),
+            'php' => serialize($value), 'json' => json_serialize($value),
             default => throw AgentException::forInvalidSerializeOption($this->options['serialize'])
         };
     }
@@ -292,8 +290,7 @@ class File extends AbstractAgent implements AgentInterface
     private function unserialize(string $value): mixed
     {
         return match ($this->options['serialize']) {
-            'php'   => unserialize($value),
-            'json'  => json_decode($value),
+            'php' => unserialize($value), 'json' => json_unserialize($value),
             default => throw AgentException::forInvalidSerializeOption($this->options['serialize'])
         };
     }
