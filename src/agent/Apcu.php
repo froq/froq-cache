@@ -61,11 +61,9 @@ class Apcu extends AbstractAgent implements AgentInterface
     {
         $value = $default;
 
-        if (apcu_exists($key)) {
-            $value = apcu_fetch($key, $ok);
-            if (!$ok) {
-                $value = $default;
-            }
+        $value = apcu_fetch($key, $ok);
+        if (!$ok) {
+            $value = $default;
         }
 
         return $value;
