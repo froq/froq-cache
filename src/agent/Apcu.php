@@ -82,7 +82,7 @@ class Apcu extends AbstractAgent implements AgentInterface
      */
     public function clear(string $prefix = null): bool
     {
-        if ($prefix) {
+        if ($prefix !== null) {
             $result = false;
 
             foreach (new \APCuIterator('~^' . $prefix . '~') as $item) {
